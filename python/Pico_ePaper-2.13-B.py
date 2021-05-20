@@ -99,9 +99,9 @@ class EPD_2in13_B:
         
     def ReadBusy(self):
         print('busy')
-        self.send_command(0x71);
+        self.send_command(0x71)
         while(self.digital_read(self.busy_pin) == 0): 
-            self.send_command(0x71);
+            self.send_command(0x71)
             self.delay_ms(10) 
         print('busy release')
         
@@ -112,20 +112,20 @@ class EPD_2in13_B:
     def init(self):
         print('init')
         self.reset()
-        self.send_command(0x04);  
-        self.ReadBusy();#waiting for the electronic paper IC to release the idle signal
+        self.send_command(0x04)  
+        self.ReadBusy()#waiting for the electronic paper IC to release the idle signal
 
-        self.send_command(0x00);    #panel setting
-        self.send_data(0x0f);   #LUT from OTP,128x296
-        self.send_data(0x89);    #Temperature sensor, boost and other related timing settings
+        self.send_command(0x00)    #panel setting
+        self.send_data(0x0f)   #LUT from OTP,128x296
+        self.send_data(0x89)    #Temperature sensor, boost and other related timing settings
 
-        self.send_command(0x61);    #resolution setting
-        self.send_data (0x68);  
-        self.send_data (0x00);  
-        self.send_data (0xD4);
+        self.send_command(0x61)    #resolution setting
+        self.send_data (0x68)  
+        self.send_data (0x00)  
+        self.send_data (0xD4)
 
-        self.send_command(0X50);    #VCOM AND DATA INTERVAL SETTING
-        self.send_data(0x77);   #WBmode:VBDF 17|D7 VBDW 97 VBDB 57
+        self.send_command(0X50)    #VCOM AND DATA INTERVAL SETTING
+        self.send_data(0x77)   #WBmode:VBDF 17|D7 VBDW 97 VBDB 57
                             # WBRmode:VBDF F7 VBDW 77 VBDB 37  VBDR B7
         return 0       
         

@@ -154,7 +154,6 @@ class EPD_2in9(framebuf.FrameBuffer):
 
     def SetCursor(self, x, y):
         self.send_command(0x4E) # SET_RAM_X_ADDRESS_COUNTER
-        # x point must be the multiple of 8 or the last 3 bits will be ignored
         self.send_data(x & 0xFF)
         
         self.send_command(0x4F) # SET_RAM_Y_ADDRESS_COUNTER
@@ -166,26 +165,26 @@ class EPD_2in9(framebuf.FrameBuffer):
         # EPD hardware init start     
         self.reset()
 
-        self.ReadBusy();   
-        self.send_command(0x12);  #SWRESET
-        self.ReadBusy();   
+        self.ReadBusy()   
+        self.send_command(0x12)  #SWRESET
+        self.ReadBusy()   
 
-        self.send_command(0x01); #Driver output control      
-        self.send_data(0x27);
-        self.send_data(0x01);
-        self.send_data(0x00);
+        self.send_command(0x01) #Driver output control      
+        self.send_data(0x27)
+        self.send_data(0x01)
+        self.send_data(0x00)
     
-        self.send_command(0x11); #data entry mode       
-        self.send_data(0x03);
+        self.send_command(0x11) #data entry mode       
+        self.send_data(0x03)
 
-        self.SetWindow(0, 0, self.width-1, self.height-1);
+        self.SetWindow(0, 0, self.width-1, self.height-1)
 
-        self.send_command(0x21); #  Display update control
-        self.send_data(0x00);
-        self.send_data(0x80);	
+        self.send_command(0x21) #  Display update control
+        self.send_data(0x00)
+        self.send_data(0x80)	
     
-        self.SetCursor(0, 0);
-        self.ReadBusy();
+        self.SetCursor(0, 0)
+        self.ReadBusy()
         # EPD hardware init end
         return 0
 
@@ -222,26 +221,26 @@ class EPD_2in9(framebuf.FrameBuffer):
         self.digital_write(self.reset_pin, 1)
         self.delay_ms(2)   
         
-        self.SendLut();
-        self.send_command(0x37); 
-        self.send_data(0x00);  
-        self.send_data(0x00);  
-        self.send_data(0x00);  
-        self.send_data(0x00); 
-        self.send_data(0x00);  	
-        self.send_data(0x40);  
-        self.send_data(0x00);  
-        self.send_data(0x00);   
-        self.send_data(0x00);  
-        self.send_data(0x00);
+        self.SendLut()
+        self.send_command(0x37) 
+        self.send_data(0x00)  
+        self.send_data(0x00)  
+        self.send_data(0x00)  
+        self.send_data(0x00) 
+        self.send_data(0x00)  	
+        self.send_data(0x40)  
+        self.send_data(0x00)  
+        self.send_data(0x00)   
+        self.send_data(0x00)  
+        self.send_data(0x00)
 
-        self.send_command(0x3C); #BorderWavefrom
-        self.send_data(0x80);
+        self.send_command(0x3C) #BorderWavefrom
+        self.send_data(0x80)
 
-        self.send_command(0x22); 
-        self.send_data(0xC0);   
-        self.send_command(0x20); 
-        self.ReadBusy();
+        self.send_command(0x22) 
+        self.send_data(0xC0)   
+        self.send_command(0x20) 
+        self.ReadBusy()
 
         self.SetWindow(0, 0, self.width - 1, self.height - 1)
         self.SetCursor(0, 0)

@@ -98,9 +98,9 @@ class EPD_2in9_B:
         
     def ReadBusy(self):
         print('busy')
-        self.send_command(0x71);
+        self.send_command(0x71)
         while(self.digital_read(self.busy_pin) == 0): 
-            self.send_command(0x71);
+            self.send_command(0x71)
             self.delay_ms(10) 
         print('busy release')
         

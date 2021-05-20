@@ -120,29 +120,23 @@ class EPD_2in66(framebuf.FrameBuffer):
         self.ReadBusy()
     
     def SetWindow(self, x_start, y_start, x_end, y_end):
-        self.send_command(0x44)
-        self.send_data(x_start)
-        if (EPD_WIDTH % 8 == 0):
-            self.send_data(int(x_end / 8 ))
-        else:
-            self.send_data(int(x_end / 8 +1))
-        
-        self.send_command(0x45)
-        self.send_data(y_start&0xff)
-        self.send_data((y_start&0x100)>>8)
-        self.send_data((y_end&0xff))
-        self.send_data((y_end&0x100)>>8)
-    
+        self.send_command(0x44) # SET_RAM_X_ADDRESS_START_END_POSITION
+        # x point must be the multiple of 8 or the last 3 bits will be ignored
+        self.send_data((x_start>>3) & 0xFF)
+        self.send_data((x_end>>3) & 0xFF)
+        self.send_command(0x45) # SET_RAM_Y_ADDRESS_START_END_POSITION
+        self.send_data(y_start & 0xFF)
+        self.send_data((y_start >> 8) & 0xFF)
+        self.send_data(y_end & 0xFF)
+        self.send_data((y_end >> 8) & 0xFF)
 
     def SetCursor(self, x, y):
         self.send_command(0x4E) # SET_RAM_X_ADDRESS_COUNTER
-        # x point must be the multiple of 8 or the last 3 bits will be ignored
         self.send_data(x & 0xFF)
         
         self.send_command(0x4F) # SET_RAM_Y_ADDRESS_COUNTER
         self.send_data(y & 0xFF)
         self.send_data((y >> 8) & 0xFF)
-        self.ReadBusy()
     
     def init(self, mode):
         
@@ -154,7 +148,7 @@ class EPD_2in66(framebuf.FrameBuffer):
         self.send_command(0x11)
         self.send_data(0x03)
         
-        self.SetWindow(1, 0, self.width, self.height)
+        self.SetWindow(8, 0, self.width, self.height)
    
         if(mode == 0):
             self.send_command(0x3c)
@@ -171,7 +165,7 @@ class EPD_2in66(framebuf.FrameBuffer):
             self.send_data(0x00)
             self.send_data(0x00)
             self.send_data(0x00)
-            self.send_data(0x00)  
+            self.send_data(0x00)
 
             self.send_command(0x3C)
             self.send_data(0x80)
@@ -189,7 +183,7 @@ class EPD_2in66(framebuf.FrameBuffer):
         if (image == None):
             return            
             
-        self.SetCursor(1, 0)
+        self.SetCursor(1, 295)
         
         self.send_command(0x24) # WRITE_RAM
         for j in range(0, self.height):

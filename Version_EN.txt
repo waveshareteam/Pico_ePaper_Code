@@ -2,3 +2,4 @@
 2021-03-17: add 2.13-B & 2.13-C & 2.9-B & 2.9-C programs.
 2021-05-12: add 2.66 program, Solve the Python program to start the problem of garbled code
 2021-05-14: add 2.66-B & 2.13-D & 2.9-D programs.
+2021-05-27：add 5.83 & 5.83-B & 7.5 & 7.5-B programs.

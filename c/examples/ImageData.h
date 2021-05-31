@@ -48,6 +48,14 @@ extern const unsigned char gImage_2in66[];
 extern const unsigned char gImage_2in66br[];
 extern const unsigned char gImage_2in66bb[];
 
+extern const unsigned char gImage_5in83_V2[];
+extern const unsigned char gImage_5in83b_V2_b[];
+extern const unsigned char gImage_5in83b_V2_r[];
+
+extern const unsigned char gImage_7in5_V2[];
+extern const unsigned char gImage_7in5_V2_b[];
+extern const unsigned char gImage_7in5_V2_ry[];
+
 #endif
 /* FILE END */
 

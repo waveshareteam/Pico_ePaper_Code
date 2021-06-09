@@ -1,12 +1,13 @@
 /*****************************************************************************
-* | File      	:	  EPD_Test.h
+* | File      	:   EPD_3IN7.h
 * | Author      :   Waveshare team
-* | Function    :   e-Paper test Demo
+* | Function    :   3.7inch e-paper
 * | Info        :
 *----------------
 * |	This version:   V1.0
-* | Date        :   2019-06-11
-* | Info        :   
+* | Date        :   2020-07-16
+* | Info        :
+* -----------------------------------------------------------------------------
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documnetation files (the "Software"), to deal
@@ -27,34 +28,24 @@
 # THE SOFTWARE.
 #
 ******************************************************************************/
-#ifndef _EPD_TEST_H_
-#define _EPD_TEST_H_
+#ifndef __EPD_3IN7_H_
+#define __EPD_3IN7_H_
 
 #include "DEV_Config.h"
-#include "GUI_Paint.h"
-#include "ImageData.h"
-#include "Debug.h"
-#include <stdlib.h> // malloc() free()
 
-int EPD_2in9_V2_test(void);
-int EPD_2in9bc_test(void);
-int EPD_2in9b_V3_test(void);
-int EPD_2in9d_test(void);
+// Display resolution
+#define EPD_3IN7_WIDTH       280
+#define EPD_3IN7_HEIGHT      480 
 
-int EPD_2in13_V2_test(void);
-int EPD_2in13_V3_test(void);
-int EPD_2in13bc_test(void);
-int EPD_2in13b_V3_test(void);
-int EPD_2in13d_test(void);
+void EPD_3IN7_4Gray_Clear(void);
+void EPD_3IN7_4Gray_Init(void);
+void EPD_3IN7_4Gray_Display(const UBYTE *Image);
 
-int EPD_2in66_test(void);
-int EPD_2in66b_test(void);
+void EPD_3IN7_1Gray_Clear(void);
+void EPD_3IN7_1Gray_Init(void);
+void EPD_3IN7_1Gray_Display(const UBYTE *Image);
+void EPD_3IN7_1Gray_Display_Part(const UBYTE *Image, UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend);
 
-int EPD_5in83_V2_test(void);
-int EPD_5in83b_V2_test(void);
+void EPD_3IN7_Sleep(void);
 
-int EPD_7in5_V2_test(void);
-int EPD_7in5b_V2_test(void);
-
-int EPD_2in7_test(void);
 #endif

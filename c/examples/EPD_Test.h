@@ -50,11 +50,11 @@ int EPD_2in13d_test(void);
 int EPD_2in66_test(void);
 int EPD_2in66b_test(void);
 
-int EPD_3in7_test(void);
-
 int EPD_5in83_V2_test(void);
 int EPD_5in83b_V2_test(void);
 
 int EPD_7in5_V2_test(void);
 int EPD_7in5b_V2_test(void);
+
+int EPD_2in7_test(void);
 #endif

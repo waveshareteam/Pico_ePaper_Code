@@ -216,7 +216,7 @@ class EPD_7in5(framebuf.FrameBuffer):
 
 if __name__=='__main__':
     epd = EPD_7in5()
-#     epd.Clear()
+    epd.Clear()
     
     epd.fill(0x00)
     

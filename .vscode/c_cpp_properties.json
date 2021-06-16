@@ -3,7 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/c/**",
                 "E:\\project\\PICO\\Code\\pico-sdk\\**"
             ],
             "defines": [
@@ -20,9 +20,10 @@
             "compileCommands": "${workspaceFolder}/c/build/compile_commands.json",
             "browse": {
                 "path": [
-                    "${workspaceFolder}/**",
-                    "E:\\project\\PICO\\Code\\pico-sdk\\**"
-                ]
+                    "${workspaceFolder}/c",
+                    "E:\\project\\PICO\\Code\\pico-sdk\\"
+                ],
+                "limitSymbolsToIncludedHeaders": false
             }
         }
     ],

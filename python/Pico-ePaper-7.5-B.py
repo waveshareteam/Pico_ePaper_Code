@@ -40,7 +40,7 @@ DC_PIN          = 8
 CS_PIN          = 9
 BUSY_PIN        = 13
 
-class EPD_7in5:
+class EPD_7in5_B:
     def __init__(self):
         self.reset_pin = Pin(RST_PIN, Pin.OUT)
         
@@ -245,8 +245,8 @@ class EPD_7in5:
         self.send_data(0xa5)
 
 if __name__=='__main__':
-    epd = EPD_7in5()
-#     epd.Clear()
+    epd = EPD_7in5_B()
+    epd.Clear()
     
     epd.imageblack.fill(0xff)
     epd.imagered.fill(0x00)

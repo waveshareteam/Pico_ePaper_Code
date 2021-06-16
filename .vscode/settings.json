@@ -13,7 +13,8 @@
         "platform.h": "c",
         "types.h": "c",
         "spi.h": "c",
-        "uart.h": "c"
+        "uart.h": "c",
+        "imagedata.h": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "cmake.configureEnvironment": {

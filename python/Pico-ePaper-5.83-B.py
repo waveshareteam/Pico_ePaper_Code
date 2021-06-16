@@ -179,7 +179,7 @@ class EPD_5in83_B():
 
 if __name__=='__main__':
     epd = EPD_5in83_B()
-    # epd.Clear(0xff, 0x00)
+    epd.Clear(0xff, 0x00)
     
     epd.imageblack.fill(0xff)
     epd.imagered.fill(0x00)

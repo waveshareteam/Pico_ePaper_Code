@@ -140,7 +140,7 @@ BUSY_PIN        = 13
 FULL_UPDATE = 0
 PART_UPDATE = 1
 
-class EPD_2in13(framebuf.FrameBuffer):
+class EPD_2in13_D(framebuf.FrameBuffer):
     def __init__(self):
         self.reset_pin = Pin(RST_PIN, Pin.OUT)
         
@@ -387,7 +387,7 @@ class EPD_2in13(framebuf.FrameBuffer):
         
         
 if __name__=='__main__':
-    epd = EPD_2in13()
+    epd = EPD_2in13_D()
     epd.Clear(0x00)
     
     epd.fill(0xff)

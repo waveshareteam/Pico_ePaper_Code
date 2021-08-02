@@ -51,7 +51,7 @@ int EPD_5in83_V2_test(void)
         return -1;
     }
     printf("Paint_NewImage\r\n");
-    Paint_NewImage(BlackImage, EPD_5in83_V2_WIDTH, EPD_5in83_V2_HEIGHT, 0, WHITE); 
+    Paint_NewImage(BlackImage, EPD_5in83_V2_WIDTH, EPD_5in83_V2_HEIGHT, 180, WHITE); 
 
 #if 1   // show image for array   
     printf("show image for array\r\n");
@@ -59,7 +59,7 @@ int EPD_5in83_V2_test(void)
     Paint_Clear(WHITE);
     Paint_DrawBitMap(gImage_5in83_V2);
     EPD_5in83_V2_Display(BlackImage);
-    DEV_Delay_ms(2000);
+    DEV_Delay_ms(500);
 #endif
 
 #if 1   // Drawing on the image
@@ -85,8 +85,8 @@ int EPD_5in83_V2_test(void)
     Paint_DrawString_EN(10, 20, "hello world", &Font12, WHITE, BLACK);
     Paint_DrawNum(10, 33, 123456789, &Font12, BLACK, WHITE);
     Paint_DrawNum(10, 50, 987654321, &Font16, WHITE, BLACK);
-    Paint_DrawString_CN(130, 0, "ï¿½ï¿½ï¿½Abc", &Font12CN, BLACK, WHITE);
-    Paint_DrawString_CN(130, 20, "Î¢Ñ©ï¿½ï¿½ï¿½ï¿½", &Font24CN, WHITE, BLACK);
+    Paint_DrawString_CN(130, 0, "ÄãºÃAbc", &Font12CN, BLACK, WHITE);
+    Paint_DrawString_CN(130, 20, "Î¢Ñ©µç×Ó", &Font24CN, WHITE, BLACK);
 
     printf("EPD_Display\r\n");
     EPD_5in83_V2_Display(BlackImage);

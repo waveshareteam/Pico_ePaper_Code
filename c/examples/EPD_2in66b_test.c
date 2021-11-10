@@ -90,7 +90,7 @@ int EPD_2in66b_test(void)
     Paint_DrawRectangle(20, 70, 70, 120, BLACK, DOT_PIXEL_1X1, DRAW_FILL_EMPTY);
     Paint_DrawRectangle(80, 70, 130, 120, BLACK, DOT_PIXEL_1X1, DRAW_FILL_FULL);
     Paint_DrawString_EN(10, 0, "waveshare", &Font16, BLACK, WHITE);
-    Paint_DrawString_CN(130, 20, "?¡é??¦Ì?¡Á¨®", &Font24CN, WHITE, BLACK);
+    Paint_DrawString_CN(130, 20, "Î¢Ñ©µç×Ó", &Font24CN, WHITE, BLACK);
     Paint_DrawNum(10, 50, 987654321, &Font16, WHITE, BLACK);
 
     //2.Draw red image
@@ -100,7 +100,7 @@ int EPD_2in66b_test(void)
     Paint_DrawCircle(210, 95, 20, BLACK, DOT_PIXEL_1X1, DRAW_FILL_FULL);
     Paint_DrawLine(85, 95, 125, 95, BLACK, DOT_PIXEL_1X1, LINE_STYLE_DOTTED);
     Paint_DrawLine(105, 75, 105, 115, BLACK, DOT_PIXEL_1X1, LINE_STYLE_DOTTED);
-    Paint_DrawString_CN(130, 0,"??o?abc", &Font12CN, BLACK, WHITE);
+    Paint_DrawString_CN(130, 0,"ÄãºÃabc", &Font12CN, BLACK, WHITE);
     Paint_DrawString_EN(10, 20, "hello world", &Font12, WHITE, BLACK);
     Paint_DrawNum(10, 33, 123456789, &Font12, BLACK, WHITE);
 

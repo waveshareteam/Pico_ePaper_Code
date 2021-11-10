@@ -87,17 +87,17 @@ int EPD_5in65f_test(void)
 	Paint_DrawString_EN(10, 20, "hello world", &Font12, WHITE, BLACK);
 	Paint_DrawNum(10, 33, 123456789, &Font12, BLACK, WHITE);
 	Paint_DrawNum(10, 50, 987654321, &Font16, WHITE, BLACK);
-	Paint_DrawString_CN(10, 120, "ÄãºÃabc", &Font12CN, EPD_5IN65F_BLACK, WHITE);
-	Paint_DrawString_CN(10, 140, "ÄãºÃabc", &Font12CN, EPD_5IN65F_GREEN, WHITE);
-	Paint_DrawString_CN(10, 160, "ÄãºÃabc", &Font12CN, EPD_5IN65F_BLUE, WHITE);
-	Paint_DrawString_CN(10, 180, "ÄãºÃabc", &Font12CN, EPD_5IN65F_RED, WHITE);
-	Paint_DrawString_CN(10, 200, "ÄãºÃabc", &Font12CN, EPD_5IN65F_ORANGE, WHITE);
+	Paint_DrawString_CN(10, 120, "�A�nabc", &Font12CN, EPD_5IN65F_BLACK, WHITE);
+	Paint_DrawString_CN(10, 140, "�A�nabc", &Font12CN, EPD_5IN65F_GREEN, WHITE);
+	Paint_DrawString_CN(10, 160, "�A�nabc", &Font12CN, EPD_5IN65F_BLUE, WHITE);
+	Paint_DrawString_CN(10, 180, "�A�nabc", &Font12CN, EPD_5IN65F_RED, WHITE);
+	Paint_DrawString_CN(10, 200, "�A�nabc", &Font12CN, EPD_5IN65F_ORANGE, WHITE);
 	
-	Paint_DrawString_CN(150, 0, "Î¢Ñ©µç×Ó", &Font24CN, WHITE, BLACK);
-	Paint_DrawString_CN(150, 40, "Î¢Ñ©µç×Ó", &Font24CN, EPD_5IN65F_GREEN, BLACK);
-	Paint_DrawString_CN(150, 80, "Î¢Ñ©µç×Ó", &Font24CN, EPD_5IN65F_BLUE, BLACK);
-	Paint_DrawString_CN(150, 120, "Î¢Ñ©µç×Ó", &Font24CN, EPD_5IN65F_RED, BLACK);
-	Paint_DrawString_CN(150, 160, "Î¢Ñ©µç×Ó", &Font24CN, EPD_5IN65F_YELLOW, BLACK);
+	Paint_DrawString_CN(150, 0, "�L��?�l", &Font24CN, WHITE, BLACK);
+	Paint_DrawString_CN(150, 40, "�L��?�l", &Font24CN, EPD_5IN65F_GREEN, BLACK);
+	Paint_DrawString_CN(150, 80, "�L��?�l", &Font24CN, EPD_5IN65F_BLUE, BLACK);
+	Paint_DrawString_CN(150, 120, "�L��?�l", &Font24CN, EPD_5IN65F_RED, BLACK);
+	Paint_DrawString_CN(150, 160, "�L��?�l", &Font24CN, EPD_5IN65F_YELLOW, BLACK);
 	
 	EPD_5IN65F_Display_part(BlackImage, 0, 0, 300, 224);
 	DEV_Delay_ms(2000); 
@@ -152,17 +152,17 @@ int EPD_5in65f_test(void)
 			Paint_DrawString_EN(10, 20, "hello world", &Font12, WHITE, BLACK);
 			Paint_DrawNum(10, 33, 123456789, &Font12, BLACK, WHITE);
 			Paint_DrawNum(10, 50, 987654321, &Font16, WHITE, BLACK);
-			Paint_DrawString_CN(10, 120, "ÄãºÃabc", &Font12CN, EPD_5IN65F_BLACK, WHITE);
-			Paint_DrawString_CN(10, 140, "ÄãºÃabc", &Font12CN, EPD_5IN65F_GREEN, WHITE);
-			Paint_DrawString_CN(10, 160, "ÄãºÃabc", &Font12CN, EPD_5IN65F_BLUE, WHITE);
-			Paint_DrawString_CN(10, 180, "ÄãºÃabc", &Font12CN, EPD_5IN65F_RED, WHITE);
-			Paint_DrawString_CN(10, 200, "ÄãºÃabc", &Font12CN, EPD_5IN65F_ORANGE, WHITE);
+			Paint_DrawString_CN(10, 120, "�A�nabc", &Font12CN, EPD_5IN65F_BLACK, WHITE);
+			Paint_DrawString_CN(10, 140, "�A�nabc", &Font12CN, EPD_5IN65F_GREEN, WHITE);
+			Paint_DrawString_CN(10, 160, "�A�nabc", &Font12CN, EPD_5IN65F_BLUE, WHITE);
+			Paint_DrawString_CN(10, 180, "�A�nabc", &Font12CN, EPD_5IN65F_RED, WHITE);
+			Paint_DrawString_CN(10, 200, "�A�nabc", &Font12CN, EPD_5IN65F_ORANGE, WHITE);
 			
-			Paint_DrawString_CN(150, 0, "Î¢Ñ©µç×Ó", &Font24CN, WHITE, BLACK);
-			Paint_DrawString_CN(150, 40, "Î¢Ñ©µç×Ó", &Font24CN, EPD_5IN65F_GREEN, BLACK);
-			Paint_DrawString_CN(150, 80, "Î¢Ñ©µç×Ó", &Font24CN, EPD_5IN65F_BLUE, BLACK);
-			Paint_DrawString_CN(150, 120, "Î¢Ñ©µç×Ó", &Font24CN, EPD_5IN65F_RED, BLACK);
-			Paint_DrawString_CN(150, 160, "Î¢Ñ©µç×Ó", &Font24CN, EPD_5IN65F_YELLOW, BLACK);
+			Paint_DrawString_CN(150, 0, "�L��?�l", &Font24CN, WHITE, BLACK);
+			Paint_DrawString_CN(150, 40, "�L��?�l", &Font24CN, EPD_5IN65F_GREEN, BLACK);
+			Paint_DrawString_CN(150, 80, "�L��?�l", &Font24CN, EPD_5IN65F_BLUE, BLACK);
+			Paint_DrawString_CN(150, 120, "�L��?�l", &Font24CN, EPD_5IN65F_RED, BLACK);
+			Paint_DrawString_CN(150, 160, "�L��?�l", &Font24CN, EPD_5IN65F_YELLOW, BLACK);
 			
 			EPD_5IN65F_Display_part(BlackImage, 0, 0, 300, 224);
             DEV_Delay_ms(3000);

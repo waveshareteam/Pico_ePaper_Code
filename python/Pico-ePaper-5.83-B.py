@@ -54,9 +54,9 @@ class EPD_5in83_B():
         self.spi.init(baudrate=4000_000)
         self.dc_pin = Pin(DC_PIN, Pin.OUT)
         
-        self.buffer_balck = bytearray(self.height * self.width // 8)
+        self.buffer_black = bytearray(self.height * self.width // 8)
         self.buffer_red = bytearray(self.height * self.width // 8)
-        self.imageblack = framebuf.FrameBuffer(self.buffer_balck, self.width, self.height, framebuf.MONO_HLSB)
+        self.imageblack = framebuf.FrameBuffer(self.buffer_black, self.width, self.height, framebuf.MONO_HLSB)
         self.imagered = framebuf.FrameBuffer(self.buffer_red, self.width, self.height, framebuf.MONO_HLSB)
         self.init()
 
@@ -187,7 +187,7 @@ if __name__=='__main__':
     epd.imagered.text("ePaper-5.83-B", 0, 25, 0xff)
     epd.imageblack.text("RPi Pico", 0, 40, 0x00)
     epd.imagered.text("Hello World", 0, 55, 0xff)
-    epd.display(epd.buffer_balck, epd.buffer_red)
+    epd.display(epd.buffer_black, epd.buffer_red)
     epd.delay_ms(2000)
     
     epd.imagered.vline(10, 90, 40, 0xff)
@@ -196,19 +196,19 @@ if __name__=='__main__':
     epd.imageblack.hline(10, 130, 80, 0x00)
     epd.imagered.line(10, 90, 90, 130, 0xff)
     epd.imageblack.line(90, 90, 10, 130, 0x00)
-    epd.display(epd.buffer_balck, epd.buffer_red)
+    epd.display(epd.buffer_black, epd.buffer_red)
     epd.delay_ms(2000)
     
     epd.imageblack.rect(10, 150, 40, 40, 0x00)
     epd.imagered.fill_rect(60, 150, 40, 40, 0xff)
-    epd.display(epd.buffer_balck, epd.buffer_red)
+    epd.display(epd.buffer_black, epd.buffer_red)
     epd.delay_ms(2000)
 
     for i in range(0, 5):
         epd.imageblack.fill_rect(200+100, i*20, 100, 10, 0x00)
     for i in range(0, 5):
         epd.imagered.fill_rect(200+0, i*20+100, 100, 10, 0xff)
-    epd.display(epd.buffer_balck, epd.buffer_red)
+    epd.display(epd.buffer_black, epd.buffer_red)
     epd.delay_ms(2000)
 
     epd.Clear(0xff, 0x00)

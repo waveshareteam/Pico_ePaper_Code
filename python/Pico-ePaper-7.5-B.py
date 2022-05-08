@@ -54,9 +54,9 @@ class EPD_7in5_B:
         self.dc_pin = Pin(DC_PIN, Pin.OUT)
         
 
-        self.buffer_balck = bytearray(self.height * self.width // 8)
+        self.buffer_black = bytearray(self.height * self.width // 8)
         self.buffer_red = bytearray(self.height * self.width // 8)
-        self.imageblack = framebuf.FrameBuffer(self.buffer_balck, self.width, self.height, framebuf.MONO_HLSB)
+        self.imageblack = framebuf.FrameBuffer(self.buffer_black, self.width, self.height, framebuf.MONO_HLSB)
         self.imagered = framebuf.FrameBuffer(self.buffer_red, self.width, self.height, framebuf.MONO_HLSB)
         self.init()
 
@@ -227,7 +227,7 @@ class EPD_7in5_B:
         self.send_command(0x10) 
         for j in range(0, high):
             for i in range(0, wide):
-                self.send_data(self.buffer_balck[i + j * wide])
+                self.send_data(self.buffer_black[i + j * wide])
             
         # send red data
         self.send_command(0x13) 

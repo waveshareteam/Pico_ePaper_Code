@@ -344,6 +344,26 @@ void EPD_2in13_V3_Display_Base(UBYTE *Image)
 }
 
 /******************************************************************************
+function :	Send lut data and configuration
+parameter:	
+    lut :   lut data
+******************************************************************************/
+static void EPD_2IN13_V2_LUT_by_host(UBYTE *lut)
+{
+	EPD_2IN13_V3_LUT((UBYTE *)lut);			//lut
+	EPD_2in13_V3_SendCommand(0x3f);
+	EPD_2in13_V3_SendData(*(lut+153));
+	EPD_2in13_V3_SendCommand(0x03);	// gate voltage
+	EPD_2in13_V3_SendData(*(lut+154));
+	EPD_2in13_V3_SendCommand(0x04);	// source voltage
+	EPD_2in13_V3_SendData(*(lut+155));	// VSH
+	EPD_2in13_V3_SendData(*(lut+156));	// VSH2
+	EPD_2in13_V3_SendData(*(lut+157));	// VSL
+	EPD_2in13_V3_SendCommand(0x2c);		// VCOM
+	EPD_2in13_V3_SendData(*(lut+158));
+}
+
+/******************************************************************************
 function :	Sends the image buffer in RAM to e-Paper and partial refresh
 parameter:
 	image : Image data

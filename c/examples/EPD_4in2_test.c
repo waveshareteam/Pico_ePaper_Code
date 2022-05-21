@@ -39,7 +39,7 @@ int EPD_4in2_test(void)
     }
 
     printf("e-Paper Init and Clear...\r\n");
-    EPD_4IN2_Init();
+    EPD_4IN2_Init_Fast();
     EPD_4IN2_Clear();
     DEV_Delay_ms(500);
 
@@ -86,16 +86,18 @@ int EPD_4in2_test(void)
     Paint_DrawString_EN(10, 20, "hello world", &Font12, WHITE, BLACK);
     Paint_DrawNum(10, 33, 123456789, &Font12, BLACK, WHITE);
     Paint_DrawNum(10, 50, 987654321, &Font16, WHITE, BLACK);
-    Paint_DrawString_CN(130, 0, "ÄãºÃabc", &Font12CN, BLACK, WHITE);
-    Paint_DrawString_CN(130, 20, "Î¢Ñ©µç×Ó", &Font24CN, WHITE, BLACK);
+    Paint_DrawString_CN(130, 0, "ï¿½ï¿½ï¿½abc", &Font12CN, BLACK, WHITE);
+    Paint_DrawString_CN(130, 20, "Î¢Ñ©ï¿½ï¿½ï¿½ï¿½", &Font24CN, WHITE, BLACK);
 
     printf("EPD_Display\r\n");
     EPD_4IN2_Display(BlackImage);
 	DEV_Delay_ms(2000);
 #endif
-	printf("Support for partial refresh, but the refresh effect is not good, but it is not recommended\r\n");
+	
 #if 0
+    printf("Support for partial refresh, but the refresh effect is not good, but it is not recommended\r\n");
 	printf("Partial refresh\r\n");
+    EPD_4IN2_Init_Partial();
     PAINT_TIME sPaint_time;
     sPaint_time.Hour = 12;
     sPaint_time.Min = 34;
@@ -155,22 +157,22 @@ int EPD_4in2_test(void)
     Paint_DrawString_EN(10, 20, "hello world", &Font12, WHITE, BLACK);
     Paint_DrawNum(10, 33, 123456789, &Font12, BLACK, WHITE);
     Paint_DrawNum(10, 50, 987654321, &Font16, WHITE, BLACK);
-    Paint_DrawString_CN(140, 0, "ÄãºÃabc", &Font12CN, GRAY1, GRAY4);
-    Paint_DrawString_CN(140, 40, "ÄãºÃabc", &Font12CN, GRAY2, GRAY3);
-    Paint_DrawString_CN(140, 80, "ÄãºÃabc", &Font12CN, GRAY3, GRAY2);
-    Paint_DrawString_CN(140, 120, "ÄãºÃabc", &Font12CN, GRAY4, GRAY1);
+    Paint_DrawString_CN(140, 0, "ï¿½ï¿½ï¿½abc", &Font12CN, GRAY1, GRAY4);
+    Paint_DrawString_CN(140, 40, "ï¿½ï¿½ï¿½abc", &Font12CN, GRAY2, GRAY3);
+    Paint_DrawString_CN(140, 80, "ï¿½ï¿½ï¿½abc", &Font12CN, GRAY3, GRAY2);
+    Paint_DrawString_CN(140, 120, "ï¿½ï¿½ï¿½abc", &Font12CN, GRAY4, GRAY1);
 	
-    Paint_DrawString_CN(220, 0, "Î¢Ñ©µç×Ó", &Font24CN, GRAY1, GRAY4);
-    Paint_DrawString_CN(220, 40, "Î¢Ñ©µç×Ó", &Font24CN, GRAY2, GRAY3);
-    Paint_DrawString_CN(220, 80, "Î¢Ñ©µç×Ó", &Font24CN, GRAY3, GRAY2);
-    Paint_DrawString_CN(220, 120, "Î¢Ñ©µç×Ó", &Font24CN, GRAY4, GRAY1);
+    Paint_DrawString_CN(220, 0, "Î¢Ñ©ï¿½ï¿½ï¿½ï¿½", &Font24CN, GRAY1, GRAY4);
+    Paint_DrawString_CN(220, 40, "Î¢Ñ©ï¿½ï¿½ï¿½ï¿½", &Font24CN, GRAY2, GRAY3);
+    Paint_DrawString_CN(220, 80, "Î¢Ñ©ï¿½ï¿½ï¿½ï¿½", &Font24CN, GRAY3, GRAY2);
+    Paint_DrawString_CN(220, 120, "Î¢Ñ©ï¿½ï¿½ï¿½ï¿½", &Font24CN, GRAY4, GRAY1);
     
     EPD_4IN2_4GrayDisplay(BlackImage);
 	DEV_Delay_ms(500);
 	
 	EPD_4IN2_Clear();
     
-#if 1
+#if 0
 
     int key=0; 
 
@@ -208,7 +210,7 @@ int EPD_4in2_test(void)
 
 	}
 #endif
-	
+	EPD_4IN2_Init_Fast();
 	EPD_4IN2_Clear();
 	
     printf("Goto Sleep...\r\n");

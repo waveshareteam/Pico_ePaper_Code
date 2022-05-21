@@ -171,10 +171,12 @@ class EPD_2in7:
         self.spi.init(baudrate=4000_000)
         self.dc_pin = Pin(DC_PIN, Pin.OUT)
         
-        
-        self.buffer_1Gray = bytearray(self.height * self.width // 8)
+        self.buffer_1Gray_Landscape = bytearray(self.height * self.width // 8)
+        self.buffer_1Gray_Portrait = bytearray(self.height * self.width // 8)
         self.buffer_4Gray = bytearray(self.height * self.width // 4)
-        self.image1Gray = framebuf.FrameBuffer(self.buffer_1Gray, self.width, self.height, framebuf.MONO_HLSB)
+        
+        self.image1Gray_Landscape = framebuf.FrameBuffer(self.buffer_1Gray_Landscape, self.height, self.width, framebuf.MONO_VLSB)
+        self.image1Gray_Portrait = framebuf.FrameBuffer(self.buffer_1Gray_Portrait, self.width, self.height, framebuf.MONO_HLSB)
         self.image4Gray = framebuf.FrameBuffer(self.buffer_4Gray, self.width, self.height, framebuf.GS2_HMSB)
         
         self.EPD_2IN7_Init_4Gray()
@@ -335,7 +337,7 @@ class EPD_2in7:
         self.send_command(0x82)  # VCM_DC_SETTING_REGISTER
         self.send_data(0x12)
 
-        self.EPD_2in7_SetLut()
+        self.SetLut()
 
     def EPD_2IN7_Init_4Gray(self):
         
@@ -426,8 +428,7 @@ class EPD_2in7:
         self.send_command(0x12)
         self.ReadBusy()
 
-        
-    def EPD_2IN7_Display(self,Image):
+    def EPD_2IN7_Display_Portrait(self,Image):
         high = self.height
         if( self.width % 8 == 0) :
             wide =  self.width // 8
@@ -437,12 +438,30 @@ class EPD_2in7:
         self.send_command(0x10)
         for j in range(0, high):
             for i in range(0, wide):
-                self.send_data(Image[i + j * wide])
+                self.send_data(0xff)
                 
         self.send_command(0x13)
         for j in range(0, high):
             for i in range(0, wide):
                 self.send_data(Image[i + j * wide])
+
+    
+    def EPD_2IN7_Display_Landscape(self,Image):
+        high = self.height
+        if( self.width % 8 == 0) :
+            wide =  self.width // 8
+        else :
+            wide =  self.width // 8 + 1
+
+        self.send_command(0x10)
+        for j in range(0, high):
+            for i in range(0, wide):
+                self.send_data(0xff)
+                
+        self.send_command(0x13)
+        for j in range(0, high):
+            for i in range(0, wide):
+                self.send_data(Image[(21-i) * high + j])
 
         
         self.send_command(0x12)
@@ -539,7 +558,8 @@ if __name__=='__main__':
     
     epd = EPD_2in7()
     
-    epd.image1Gray.fill(0xff)
+    epd.image1Gray_Landscape.fill(0xff)
+    epd.image1Gray_Portrait.fill(0xff)
     epd.image4Gray.fill(0xff)
     
     epd.image4Gray.text("Waveshare", 5, 5, epd.black)
@@ -571,9 +591,19 @@ if __name__=='__main__':
     epd.delay_ms(500)
     
 
-
+    
+    epd.EPD_2IN7_Init()
     epd.EPD_2IN7_Clear()
+    epd.image1Gray_Landscape.text("Waveshare", 5, 5, epd.black)
+    epd.image1Gray_Landscape.text("Pico_ePaper-2.7", 5, 20, epd.black)
+    epd.image1Gray_Landscape.text("Raspberry Pico", 5, 35, epd.black)
+    epd.EPD_2IN7_Display_Landscape(epd.buffer_1Gray_Landscape)
+    epd.delay_ms(500)
+    
+    epd.EPD_2IN7_Clear()
+    print("Sleep")
     epd.Sleep()
+
 
 
 

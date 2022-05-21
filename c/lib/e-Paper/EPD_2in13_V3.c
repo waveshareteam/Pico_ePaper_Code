@@ -359,7 +359,7 @@ void EPD_2in13_V3_Display_Partial(UBYTE *Image)
     DEV_Delay_ms(1);
     DEV_Digital_Write(EPD_RST_PIN, 1);
 
-	EPD_2IN13_V2_LUT_by_host(WF_PARTIAL_2IN13_V3);
+	EPD_2IN13_V3_LUT_by_host(WF_PARTIAL_2IN13_V3);
 
 	EPD_2in13_V3_SendCommand(0x37); 
 	EPD_2in13_V3_SendData(0x00);  

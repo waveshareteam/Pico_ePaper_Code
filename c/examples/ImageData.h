@@ -40,6 +40,8 @@ extern const unsigned char gImage_2in9bc_b[];
 extern const unsigned char gImage_2in9bc_ry[];
 
 extern const unsigned char gImage_2in13[];
+extern const unsigned char gImage_2in13b_V4b[];
+extern const unsigned char gImage_2in13b_V4r[];
 extern const unsigned char gImage_2in13b_b[];
 extern const unsigned char gImage_2in13b_r[];
 extern const unsigned char gImage_2in13c_b[];

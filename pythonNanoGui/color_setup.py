@@ -20,6 +20,7 @@ import gc
 # from drivers.ePaper2in7 import EPD as SSD
 # from drivers.ePaper2in9 import EPD as SSD
 # from drivers.ePaper3in7 import EPD as SSD
+# from drivers.ePaper4in2 import EPD as SSD
 # from drivers.ePaper7in5b import EPD as SSD
 
 RST_PIN         = 12

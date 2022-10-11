@@ -1,10 +1,7 @@
-# epd_async.py Demo of nano_gui asynchronous code.
-# Needs a large screen e.g.
-# https://www.waveshare.com/wiki/2.7inch_e-Paper_HAT
-# or 4.2" Waveshare Pico ePaper display.
+# ePaper_test.py Demo program for nano_gui on an Waveshare ePaper screen
 
 # Released under the MIT License (MIT). See LICENSE.
-# Copyright (c) 2020-2022 Peter Hinch
+# Copyright (c) 2020 Peter Hinch
 
 # color_setup must set landcsape False, asyn True and must not set demo_mode
 import uasyncio as asyncio
@@ -88,9 +85,9 @@ async def meter(evt):
             await evt.wait()
 
 async def main():
-#    ssd.fill(1)
-#    ssd.show()
-#    await ssd.wait()
+    ssd.fill(1)
+    ssd.show()
+    await ssd.wait()
     refresh(ssd, True)  # Clear display
     await ssd.wait()
     print('Ready')

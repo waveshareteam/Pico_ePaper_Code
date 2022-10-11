@@ -177,7 +177,7 @@ class EPD(framebuf.FrameBuffer):
         await self._updated.wait()
 
     # For polling in asynchronous code. Just checks pin state.
-    # 1 == busy. Comment in official code is wrong. Code is correct.
+    # 1 == busy.
     def ready(self):
         return not(self._as_busy or (self._busy() == 1))  # 1 == busy
 
@@ -230,7 +230,7 @@ class EPD(framebuf.FrameBuffer):
         cmd(b'\x20')  # DISPLAY_REFRESH
 
         await asyncio.sleep(1)
-        while self._busy() == 0:
+        while self._busy() == 1:
             await asyncio.sleep_ms(200)  # Don't release lock until update is complete
         self._as_busy = False
 

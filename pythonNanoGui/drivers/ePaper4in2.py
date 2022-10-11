@@ -162,7 +162,7 @@ class EPD(framebuf.FrameBuffer):
             
         self.send_command(b"\x24")
         self.send_bytes(EPD_lut_bb)
-# Clear display
+        # Clear display
         self.send_command(b"\x10")
         for j in range(_EPD_HEIGHT):
             self.send_bytes(b"\xff" * _BWIDTH)

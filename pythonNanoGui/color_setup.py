@@ -8,20 +8,35 @@
 # -----------------------------------------------------------------------------
 # * | File        :	  color_setup.py
 # * | Function    :   configuration file
-# * | This version:   V1.1
-# * | Date        :   2022-09-22
+# * | This version:   V1.2
+# * | Date        :   2022-10-11
 # -----------------------------------------------------------------------------
 
 import machine
 import gc
 
+## For Pico-ePaper-2.13
 # from drivers.ePaper2in13V4 import EPD as SSD
+
+## For Pico-ePaper-2.13-B
 # from drivers.ePaper2in13bV4 import EPD as SSD
+# from drivers.ePaper2in13bV4 import EPDred as SSDred
+
+## For Pico-ePaper-2.7
 # from drivers.ePaper2in7 import EPD as SSD
+
+## For Pico-ePaper-2.9
 # from drivers.ePaper2in9 import EPD as SSD
+
+## For Pico-ePaper-3.7
 # from drivers.ePaper3in7 import EPD as SSD
+
+## For Pico-ePaper-4.2
 # from drivers.ePaper4in2 import EPD as SSD
+
+## For Pico-ePaper-7.5-B
 # from drivers.ePaper7in5b import EPD as SSD
+# from drivers.ePaper7in5b import EPDred as SSDred
 
 RST_PIN         = 12
 DC_PIN          = 8
@@ -35,4 +50,5 @@ spi = machine.SPI(1, baudrate=4_000_000)
 pdc = machine.Pin(DC_PIN, machine.Pin.OUT)
 gc.collect()  # Precaution before instantiating framebuf
 ssd = SSD(spi, pcs, pdc, prst, pbusy, landscape=True, asyn=False)  # Create a display instance
+#ssdred = SSDred(spi, pcs, pdc, prst, pbusy, landscape=False)  # Cread a red display instance (just for B model)
 ssd.demo_mode = True

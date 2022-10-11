@@ -1,4 +1,4 @@
-# epd29_sync.py Demo of synchronous code on 2.9" EPD display
+# ePaper2in9_test_sync.py Demo of synchronous code on 2.9" EPD display
 
 # Released under the MIT License (MIT). See LICENSE.
 # Copyright (c) 2020 Peter Hinch

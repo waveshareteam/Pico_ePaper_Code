@@ -86,7 +86,7 @@ async def meter(evt):
             await evt.wait()
 
 async def main():
-    ssdred.fill(0)
+    ssdred.fill(1)
     ssd.fill(1)
     ssdred.show()
     ssd.show()
@@ -129,3 +129,4 @@ except KeyboardInterrupt:
     ssd.wait_until_ready()  # Synchronous code
 finally:
     _ = asyncio.new_event_loop()
+

@@ -36,8 +36,8 @@ class EPD(framebuf.FrameBuffer):
         self._as_busy = False  # Set immediately on start of task. Cleared when busy pin is logically false (physically 1).
         self._updated = asyncio.Event()
         # Public bound variables required by nanogui.
-        self.width = 800 if landscape else 480  
-        self.height = 480 if landscape else 800
+        self.width = 480 if landscape else 800  
+        self.height = 800 if landscape else 480
         self.demo_mode = False  # Special mode enables demos to run
         self._buffer = bytearray(self.height * self.width // 8)
         self._mvb = memoryview(self._buffer)
@@ -265,8 +265,8 @@ class EPDred(framebuf.FrameBuffer):
         self._lsc = landscape
         self._as_busy = False  # Set immediately on start of task. Cleared when busy pin is logically false (physically 1).
         # Public bound variables required by nanogui.
-        self.width = 800 if landscape else 480  
-        self.height = 480 if landscape else 800
+        self.width = 480 if landscape else 800  
+        self.height = 800 if landscape else 480
         self.demo_mode = False  # Special mode enables demos to run
         self._buffer = bytearray(self.height * self.width // 8)
         self._mvb = memoryview(self._buffer)

@@ -19,5 +19,6 @@
     "C_Cpp.errorSquiggles": "Enabled",
     "cmake.configureEnvironment": {
         "PICO_SDK_PATY": "E:\\project\\PICO\\Code\\pico-sdk"
-    }
+    },
+    "python.analysis.typeCheckingMode": "basic"
 }

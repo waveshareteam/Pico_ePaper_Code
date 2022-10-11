@@ -568,11 +568,8 @@ class EPD_3in7:
         self.ReadBusy()
         
     def Sleep(self):
-        self.send_command(0X50)
-        self.send_data(0xf7)
-        self.send_command(0X02)  # power off
-        self.send_command(0X07)  # deep sleep
-        self.send_data(0xA5)
+        self.send_command(0X10)  # deep sleep
+        self.send_data(0x03)
     
 if __name__=='__main__':
     

@@ -97,7 +97,7 @@ class EPD(framebuf.FrameBuffer):
         self._data(b'\x00')
         self._data(b'\x00')
 
-        self._command(b'\x3C') # BorderWavefrom
+        self._command(b'\x3C') # BorderWaveform
         self._data(b'\x05')
 
         self._command(b'\x18') # Read built-in temperature sensor

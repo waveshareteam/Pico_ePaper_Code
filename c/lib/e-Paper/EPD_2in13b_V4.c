@@ -152,7 +152,7 @@ void EPD_2IN13B_V4_Init(void)
 	EPD_2IN13B_V4_SetWindows(0, 0, EPD_2IN13B_V4_WIDTH-1, EPD_2IN13B_V4_HEIGHT-1);
 	EPD_2IN13B_V4_SetCursor(0, 0);
 
-	EPD_2IN13B_V4_SendCommand(0x3C); //BorderWavefrom
+	EPD_2IN13B_V4_SendCommand(0x3C); //BorderWaveform
 	EPD_2IN13B_V4_SendData(0x05);	
 
 	EPD_2IN13B_V4_SendCommand(0x18); //Read built-in temperature sensor

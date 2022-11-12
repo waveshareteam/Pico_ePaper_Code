@@ -234,7 +234,7 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         self.send_data(0x00)  
         self.send_data(0x00)
 
-        self.send_command(0x3C) #BorderWavefrom
+        self.send_command(0x3C) #BorderWaveform
         self.send_data(0x80)
 
         self.send_command(0x22) 
@@ -438,7 +438,7 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
         self.send_data(0x00)  
         self.send_data(0x00)
 
-        self.send_command(0x3C) #BorderWavefrom
+        self.send_command(0x3C) #BorderWaveform
         self.send_data(0x80)
 
         self.send_command(0x22) 

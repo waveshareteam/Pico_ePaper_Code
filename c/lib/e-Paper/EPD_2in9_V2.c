@@ -272,7 +272,7 @@ void EPD_2IN9_V2_Display_Partial(UBYTE *Image)
 	EPD_2IN9_V2_SendData(0x00);  
 	EPD_2IN9_V2_SendData(0x00);
 
-	EPD_2IN9_V2_SendCommand(0x3C); //BorderWavefrom
+	EPD_2IN9_V2_SendCommand(0x3C); //BorderWaveform
 	EPD_2IN9_V2_SendData(0x80);	
 
 	EPD_2IN9_V2_SendCommand(0x22); 

@@ -188,7 +188,7 @@ class EPD_2in13(framebuf.FrameBuffer):
             self.send_data(0x2e)
             self.send_data(0x00)
             
-            self.send_command(0x3C) #BorderWavefrom
+            self.send_command(0x3C) #BorderWaveform
             self.send_data(0x03)
 
             self.send_command(0x2C)     #VCOM Voltage
@@ -241,7 +241,7 @@ class EPD_2in13(framebuf.FrameBuffer):
             self.send_command(0x20)
             self.ReadBusy()
 
-            self.send_command(0x3C) #BorderWavefrom
+            self.send_command(0x3C) #BorderWaveform
             self.send_data(0x01)
         return 0       
         

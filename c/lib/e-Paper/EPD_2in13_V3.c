@@ -253,7 +253,7 @@ void EPD_2in13_V3_Init(void)
 	EPD_2in13_V3_SetWindows(0, 0, EPD_2in13_V3_WIDTH-1, EPD_2in13_V3_HEIGHT-1);
 	EPD_2in13_V3_SetCursor(0, 0);
 	
-	EPD_2in13_V3_SendCommand(0x3C); //BorderWavefrom
+	EPD_2in13_V3_SendCommand(0x3C); //BorderWaveform
 	EPD_2in13_V3_SendData(0x05);	
 
 	EPD_2in13_V3_SendCommand(0x21); //  Display update control
@@ -373,7 +373,7 @@ void EPD_2in13_V3_Display_Partial(UBYTE *Image)
 	EPD_2in13_V3_SendData(0x00);  
 	EPD_2in13_V3_SendData(0x00);
 
-	EPD_2in13_V3_SendCommand(0x3C); //BorderWavefrom
+	EPD_2in13_V3_SendCommand(0x3C); //BorderWaveform
 	EPD_2in13_V3_SendData(0x80);	
 
 	EPD_2in13_V3_SendCommand(0x22); //Display Update Sequence Option

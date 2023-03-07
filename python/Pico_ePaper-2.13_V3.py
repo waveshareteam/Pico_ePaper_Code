@@ -290,7 +290,7 @@ class EPD_2in13_V3_Portrait(framebuf.FrameBuffer):
         self.SetWindows(0, 0, self.width-1, self.height-1)
         self.SetCursor(0, 0)
         
-        self.send_command(0x3C)  # BorderWavefrom
+        self.send_command(0x3C)  # BorderWaveform
         self.send_data(0x05)
         
         self.send_command(0x21) # Display update control
@@ -532,7 +532,7 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.SetWindows(0, 0, self.width-1, self.height-1)
         self.SetCursor(0, 0)
         
-        self.send_command(0x3C)  # BorderWavefrom
+        self.send_command(0x3C)  # BorderWaveform
         self.send_data(0x05)
         
         self.send_command(0x21) # Display update control

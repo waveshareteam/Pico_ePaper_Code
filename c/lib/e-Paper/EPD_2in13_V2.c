@@ -201,7 +201,7 @@ void EPD_2IN13_V2_Init(UBYTE Mode)
         EPD_2IN13_V2_SendData(0x00);
         EPD_2IN13_V2_SendData(0x00);
 
-        EPD_2IN13_V2_SendCommand(0x3C); //BorderWavefrom
+        EPD_2IN13_V2_SendCommand(0x3C); //BorderWaveform
         EPD_2IN13_V2_SendData(0x03);
 
         EPD_2IN13_V2_SendCommand(0x2C); //VCOM Voltage
@@ -257,7 +257,7 @@ void EPD_2IN13_V2_Init(UBYTE Mode)
         EPD_2IN13_V2_SendCommand(0x20);
         EPD_2IN13_V2_ReadBusy();
 
-        EPD_2IN13_V2_SendCommand(0x3C); //BorderWavefrom
+        EPD_2IN13_V2_SendCommand(0x3C); //BorderWaveform
         EPD_2IN13_V2_SendData(0x01);
     } else {
         Debug("error, the Mode is EPD_2IN13_FULL or EPD_2IN13_PART");

@@ -62,6 +62,28 @@ WF_PARTIAL_2IN9 = [
     0x22,0x17,0x41,0xB0,0x32,0x36,
 ]
 
+WS_20_30 = [									
+    0x80,	0x66,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x40,	0x0,	0x0,	0x0,
+    0x10,	0x66,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x20,	0x0,	0x0,	0x0,
+    0x80,	0x66,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x40,	0x0,	0x0,	0x0,
+    0x10,	0x66,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x20,	0x0,	0x0,	0x0,
+    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,
+    0x14,	0x8,	0x0,	0x0,	0x0,	0x0,	0x2,					
+    0xA,	0xA,	0x0,	0xA,	0xA,	0x0,	0x1,					
+    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
+    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
+    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
+    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
+    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
+    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
+    0x14,	0x8,	0x0,	0x1,	0x0,	0x0,	0x1,					
+    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x1,					
+    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
+    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
+    0x44,	0x44,	0x44,	0x44,	0x44,	0x44,	0x0,	0x0,	0x0,			
+    0x22,	0x17,	0x41,	0x0,	0x32,	0x36
+]
+
 class EPD_2in9_Portrait(framebuf.FrameBuffer):
     def __init__(self):
         self.reset_pin = Pin(RST_PIN, Pin.OUT)
@@ -71,7 +93,8 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         self.width = EPD_WIDTH
         self.height = EPD_HEIGHT
         
-        self.lut = WF_PARTIAL_2IN9
+        self.partial_lut = WF_PARTIAL_2IN9
+        self.full_lut = WS_20_30
         
         self.spi = SPI(1)
         self.spi.init(baudrate=4000_000)
@@ -125,7 +148,7 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
 
     def TurnOnDisplay(self):
         self.send_command(0x22) # DISPLAY_UPDATE_CONTROL_2
-        self.send_data(0xF7)
+        self.send_data(0xC7)
         self.send_command(0x20) # MASTER_ACTIVATION
         self.ReadBusy()
 
@@ -135,11 +158,24 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         self.send_command(0x20) # MASTER_ACTIVATION
         self.ReadBusy()
 
-    def SendLut(self):
+    def lut(self, lut):
         self.send_command(0x32)
         for i in range(0, 153):
-            self.send_data(self.lut[i])
+            self.send_data(lut[i])
         self.ReadBusy()
+
+    def SetLut(self, lut):
+        self.lut(lut)
+        self.send_command(0x3f)
+        self.send_data(lut[153])
+        self.send_command(0x03);	# gate voltage
+        self.send_data(lut[154])
+        self.send_command(0x04);	# source voltage
+        self.send_data(lut[155])	# VSH
+        self.send_data(lut[156])	# VSH2
+        self.send_data(lut[157])	# VSL
+        self.send_command(0x2c);		# VCOM
+        self.send_data(lut[158])
 
     def SetWindow(self, x_start, y_start, x_end, y_end):
         self.send_command(0x44) # SET_RAM_X_ADDRESS_START_END_POSITION
@@ -185,6 +221,8 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
     
         self.SetCursor(0, 0)
         self.ReadBusy()
+
+        self.SetLut(self.full_lut)
         # EPD hardware init end
         return 0
 
@@ -221,7 +259,7 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         self.digital_write(self.reset_pin, 1)
         self.delay_ms(2)   
         
-        self.SendLut()
+        self.SetLut(self.partial_lut)
         self.send_command(0x37) 
         self.send_data(0x00)  
         self.send_data(0x00)  
@@ -275,7 +313,8 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
         self.width = EPD_WIDTH
         self.height = EPD_HEIGHT
         
-        self.lut = WF_PARTIAL_2IN9
+        self.partial_lut = WF_PARTIAL_2IN9
+        self.full_lut = WS_20_30
         
         self.spi = SPI(1)
         self.spi.init(baudrate=4000_000)
@@ -329,7 +368,7 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
 
     def TurnOnDisplay(self):
         self.send_command(0x22) # DISPLAY_UPDATE_CONTROL_2
-        self.send_data(0xF7)
+        self.send_data(0xC7)
         self.send_command(0x20) # MASTER_ACTIVATION
         self.ReadBusy()
 
@@ -339,11 +378,24 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
         self.send_command(0x20) # MASTER_ACTIVATION
         self.ReadBusy()
 
-    def SendLut(self):
+    def lut(self, lut):
         self.send_command(0x32)
         for i in range(0, 153):
-            self.send_data(self.lut[i])
+            self.send_data(lut[i])
         self.ReadBusy()
+
+    def SetLut(self, lut):
+        self.lut(lut)
+        self.send_command(0x3f)
+        self.send_data(lut[153])
+        self.send_command(0x03) 	# gate voltage
+        self.send_data(lut[154])
+        self.send_command(0x04) 	# source voltage
+        self.send_data(lut[155])	# VSH
+        self.send_data(lut[156])	# VSH2
+        self.send_data(lut[157])	# VSL
+        self.send_command(0x2c)		# VCOM
+        self.send_data(lut[158])
 
     def SetWindow(self, x_start, y_start, x_end, y_end):
         self.send_command(0x44) # SET_RAM_X_ADDRESS_START_END_POSITION
@@ -389,6 +441,8 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
     
         self.SetCursor(0, 0)
         self.ReadBusy()
+
+        self.SetLut(self.full_lut)
         # EPD hardware init end
         return 0
 
@@ -425,7 +479,7 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
         self.digital_write(self.reset_pin, 1)
         self.delay_ms(2)   
         
-        self.SendLut()
+        self.SetLut(self.partial_lut)
         self.send_command(0x37) 
         self.send_data(0x00)  
         self.send_data(0x00)  

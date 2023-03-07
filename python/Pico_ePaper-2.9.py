@@ -168,13 +168,13 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         self.lut(lut)
         self.send_command(0x3f)
         self.send_data(lut[153])
-        self.send_command(0x03);	# gate voltage
+        self.send_command(0x03) 	# gate voltage
         self.send_data(lut[154])
-        self.send_command(0x04);	# source voltage
+        self.send_command(0x04) 	# source voltage
         self.send_data(lut[155])	# VSH
         self.send_data(lut[156])	# VSH2
         self.send_data(lut[157])	# VSL
-        self.send_command(0x2c);		# VCOM
+        self.send_command(0x2c)		# VCOM
         self.send_data(lut[158])
 
     def SetWindow(self, x_start, y_start, x_end, y_end):

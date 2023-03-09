@@ -31,6 +31,47 @@
 #include "EPD_2in9_V2.h"
 #include "Debug.h"
 
+
+// The chip that drives the display is an SSD1680
+
+// This is based on the waveforms for driving the 3.7 inch display
+UBYTE _WF_4GREY_2IN9[159] =
+{
+0b00101010, 0b00000110, 0b00010101, 0, 0, 0, 0, 0, 0, 0, 0, 0, // LUT 0
+0b00101000, 0b00000110, 0b00010100, 0, 0, 0, 0, 0, 0, 0, 0, 0, // LUT 1
+0b00100000, 0b00000110, 0b00010000, 0, 0, 0, 0, 0, 0, 0, 0, 0, // LUT 2
+0b00010100, 0b00000110, 0b00101000, 0, 0, 0, 0, 0, 0, 0, 0, 0, // LUT 3
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // LUT 4
+//TP[A]
+//  TP[B]
+//      SR[AB]
+//          TB[C]
+//              TB[D]
+//                  SR[CD]
+//                      RP
+0,  2,  0,  2, 10,  0,  0, // Group 0
+0,  0,  0,  8,  8,  0,  2, // Group 1
+0,  2,  0,  2, 10,  0,  0, // Group 2
+0,  0,  0,  0,  0,  0,  0, // Group 3
+0,  0,  0,  0,  0,  0,  0, // Group 4
+0,  0,  0,  0,  0,  0,  0, // Group 5
+0,  0,  0,  0,  0,  0,  0, // Group 6
+0,  0,  0,  0,  0,  0,  0, // Group 7
+0,  0,  0,  0,  0,  0,  0, // Group 8
+0,  0,  0,  0,  0,  0,  0, // Group 9
+0,  0,  0,  0,  0,  0,  0, // Group 11
+0,  0,  0,  0,  0,  0,  0, // Group 12
+
+0x22,0x22,0x22,0x22,0x22,0x22, // Framerates (FR[0] to FR[11])
+0, 0, 0, // Gate scan selection (XON)
+0x22, // EOPT = Normal
+0x17, // VGH  = 20 V
+0x41, // VSH1 = 15 V
+0xB0, // VSH2 = 5.8 V
+0x32, // VSL  = -15 V
+0x36, // VCOM = -1.3 to -1.4 (not shown on datasheet)
+};
+
 UBYTE _WF_PARTIAL_2IN9[159] =
 {
 0,          0b01000000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // LUT 0 (black to black)
@@ -207,6 +248,14 @@ static void EPD_2IN9_V2_TurnOnDisplay_Partial(void)
 	EPD_2IN9_V2_ReadBusy();
 }
 
+static void EPD_2IN9_V2_TurnOnDisplay_4Grey(void)
+{
+    EPD_2IN9_V2_SendCommand(0x22); // Display Update Control 2
+    EPD_2IN9_V2_SendData(0xCF); // Display mode 2
+    EPD_2IN9_V2_SendCommand(0x20); // Master Activation
+    EPD_2IN9_V2_ReadBusy();
+}
+
 /******************************************************************************
 function :	Setting the display window
 parameter:
@@ -358,6 +407,74 @@ void EPD_2IN9_V2_Display_Partial(UBYTE *Image)
 		EPD_2IN9_V2_SendData(Image[i]);
 	}
 	EPD_2IN9_V2_TurnOnDisplay_Partial();
+}
+
+void EPD_2IN9_V2_Display_4grey(UBYTE *Image)
+{
+    UWORD i,j,k;
+    UBYTE imgByte,currPix,value;
+
+    // Reset
+    DEV_Digital_Write(EPD_RST_PIN, 0);
+    DEV_Delay_ms(5);
+    DEV_Digital_Write(EPD_RST_PIN, 1);
+    DEV_Delay_ms(10);
+
+    EPD_2IN9_V2_LUT(_WF_4GREY_2IN9);
+
+    EPD_2IN9_V2_SendCommand(0x3C); // Border Waveform Control
+    EPD_2IN9_V2_SendData(0x80);
+
+    EPD_2IN9_V2_SetWindows(0, 0, EPD_2IN9_V2_WIDTH-1, EPD_2IN9_V2_HEIGHT-1);
+    EPD_2IN9_V2_SetCursor(0, 0);
+
+    EPD_2IN9_V2_SendCommand(0x24); // Write RAM (B/W)
+    for (i = 0;i < 4736;i ++)
+    {
+        // Fine layer (0 is darker)
+        value = 0;
+        for (j = 0; j < 2; j ++) {
+            imgByte = Image[i * 2 + j];
+            for (k = 0; k < 4; k ++) {
+                // Take the current pixel
+                currPix = imgByte & 0b11000000;
+                if (currPix == 0b11000000 || // White (GRAY1)
+                    currPix == 0b01000000)   // GREY3
+                    value |= 1;
+
+                if (j!=1 || k!=3)
+                    value <<= 1;
+
+                imgByte <<= 2;
+            }
+        }
+        EPD_2IN9_V2_SendData(value);
+    }
+
+    EPD_2IN9_V2_SendCommand(0x26); // Write RAM (RED)
+    for (i = 0;i < 4736;i ++)
+    {
+        // Coarse layer (0 is darker)
+        value = 0;
+        for (j = 0; j < 2; j ++) {
+            imgByte = Image[i * 2 + j];
+            for (k = 0; k < 4; k ++) {
+                // Take the current pixel
+                currPix = imgByte & 0b11000000;
+                if (currPix == 0b11000000 || // White (GRAY1)
+                    currPix == 0b10000000)   // GREY2
+                    value |= 1;
+
+                if (j!=1 || k!=3)
+                    value <<= 1;
+
+                imgByte <<= 2;
+            }
+        }
+        EPD_2IN9_V2_SendData(value);
+    }
+
+    EPD_2IN9_V2_TurnOnDisplay_4Grey();
 }
 
 /******************************************************************************

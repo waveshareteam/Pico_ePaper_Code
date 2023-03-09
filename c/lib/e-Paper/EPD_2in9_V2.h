@@ -43,5 +43,6 @@ void EPD_2IN9_V2_Display(UBYTE *Image);
 void EPD_2IN9_V2_Display_Base(UBYTE *Image);
 void EPD_2IN9_V2_Display_Partial(UBYTE *Image);
 void EPD_2IN9_V2_Sleep(void);
+void EPD_2IN9_V2_Display_4grey(UBYTE *Image);
 
 #endif

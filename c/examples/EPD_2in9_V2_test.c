@@ -43,17 +43,38 @@ int EPD_2in9_V2_test(void)
 
     //Create a new image cache
     UBYTE *BlackImage;
-    UWORD Imagesize = ((EPD_2IN9_V2_WIDTH % 8 == 0)? (EPD_2IN9_V2_WIDTH / 8 ): (EPD_2IN9_V2_WIDTH / 8 + 1)) * EPD_2IN9_V2_HEIGHT;
+    // Additional `*2` on the end to account for four-colour images
+    UWORD Imagesize = ((EPD_2IN9_V2_WIDTH % 8 == 0)? (EPD_2IN9_V2_WIDTH / 8 ): (EPD_2IN9_V2_WIDTH / 8 + 1)) * EPD_2IN9_V2_HEIGHT * 2;
     if((BlackImage = (UBYTE *)malloc(Imagesize)) == NULL) {
         printf("Failed to apply for black memory...\r\n");
         return -1;
     }
     printf("Paint_NewImage\r\n");
     Paint_NewImage(BlackImage, EPD_2IN9_V2_WIDTH, EPD_2IN9_V2_HEIGHT, 90, WHITE);
+    Paint_SetScale(2); // b&w
 	Paint_Clear(WHITE);
 
+#if 1  //show 4colour image
+    Paint_NewImage(BlackImage, EPD_2IN9_V2_WIDTH, EPD_2IN9_V2_HEIGHT, 90, WHITE);
+    Paint_SetScale(4); // 4grey
+    printf("show image for grey\r\n");
+    Paint_SelectImage(BlackImage);
+    Paint_Clear(WHITE);
+    // Draw stripes
+    Paint_DrawRectangle(0,                          0, EPD_2IN9_V2_HEIGHT / 4,     EPD_2IN9_V2_WIDTH, GRAY1, 1, 1);
+    Paint_DrawRectangle(EPD_2IN9_V2_HEIGHT / 4,     0, EPD_2IN9_V2_HEIGHT / 4 * 2, EPD_2IN9_V2_WIDTH, GRAY2, 1, 1);
+    Paint_DrawRectangle(EPD_2IN9_V2_HEIGHT / 4 * 2, 0, EPD_2IN9_V2_HEIGHT / 4 * 3, EPD_2IN9_V2_WIDTH, GRAY3, 1, 1);
+    Paint_DrawRectangle(EPD_2IN9_V2_HEIGHT / 4 * 3, 0, EPD_2IN9_V2_HEIGHT,         EPD_2IN9_V2_WIDTH, GRAY4, 1, 1);
+
+    EPD_2IN9_V2_Display_4grey(BlackImage);
+    DEV_Delay_ms(3000);
+    EPD_2IN9_V2_Init(); // We have to reinit afterwards for black n white
+    DEV_Delay_ms(200);
+#endif
+
 #if 1  //show image for array  
-    Paint_NewImage(BlackImage, EPD_2IN9_V2_WIDTH, EPD_2IN9_V2_HEIGHT, 90, WHITE);  
+    Paint_NewImage(BlackImage, EPD_2IN9_V2_WIDTH, EPD_2IN9_V2_HEIGHT, 90, WHITE);
+    Paint_SetScale(2); // b&w
     printf("show image for array\r\n");
     Paint_SelectImage(BlackImage);
     Paint_Clear(WHITE);
@@ -64,7 +85,8 @@ int EPD_2in9_V2_test(void)
 #endif
 
 #if 1  // Drawing on the image
-	Paint_NewImage(BlackImage, EPD_2IN9_V2_WIDTH, EPD_2IN9_V2_HEIGHT, 90, WHITE);  	
+	Paint_NewImage(BlackImage, EPD_2IN9_V2_WIDTH, EPD_2IN9_V2_HEIGHT, 90, WHITE);
+    Paint_SetScale(2); // b&w
     printf("Drawing\r\n");
     //1.Select Image
     Paint_SelectImage(BlackImage);

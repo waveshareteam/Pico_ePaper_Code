@@ -54,17 +54,13 @@ int EPD_2in9_V2_test(void)
     Paint_SetScale(2); // b&w
 	Paint_Clear(WHITE);
 
-#if 1  //show 4colour image
+#if 1  //show 4colour image for array
     Paint_NewImage(BlackImage, EPD_2IN9_V2_WIDTH, EPD_2IN9_V2_HEIGHT, 90, WHITE);
     Paint_SetScale(4); // 4grey
     printf("show image for grey\r\n");
     Paint_SelectImage(BlackImage);
     Paint_Clear(WHITE);
-    // Draw stripes
-    Paint_DrawRectangle(0,                          0, EPD_2IN9_V2_HEIGHT / 4,     EPD_2IN9_V2_WIDTH, GRAY1, 1, 1);
-    Paint_DrawRectangle(EPD_2IN9_V2_HEIGHT / 4,     0, EPD_2IN9_V2_HEIGHT / 4 * 2, EPD_2IN9_V2_WIDTH, GRAY2, 1, 1);
-    Paint_DrawRectangle(EPD_2IN9_V2_HEIGHT / 4 * 2, 0, EPD_2IN9_V2_HEIGHT / 4 * 3, EPD_2IN9_V2_WIDTH, GRAY3, 1, 1);
-    Paint_DrawRectangle(EPD_2IN9_V2_HEIGHT / 4 * 3, 0, EPD_2IN9_V2_HEIGHT,         EPD_2IN9_V2_WIDTH, GRAY4, 1, 1);
+    Paint_DrawBitMap(gImage_2in9_4gray);
 
     EPD_2IN9_V2_Display_4grey(BlackImage);
     DEV_Delay_ms(3000);

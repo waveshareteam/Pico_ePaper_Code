@@ -116,6 +116,12 @@ class EPD_2in9_B:
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
         
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
+        
     def SetWindow(self, x_start, y_start, x_end, y_end):
         self.send_command(0x44)
         self.send_data((x_start>>3) & 0x1f)
@@ -174,14 +180,16 @@ class EPD_2in9_B:
             wide =  self.width // 8
         else :
             wide =  self.width // 8 + 1
+            
         self.send_command(0x24)
         for j in range(0, high):
             for i in range(0, wide):
-                self.send_data(self.buffer_black[i + j * wide])   
+                self.send_data(~self.buffer_black[i + j * wide])  
+        
         self.send_command(0x26)
         for j in range(0, high):
             for i in range(0, wide):
-                self.send_data(~self.buffer_red[i + j * wide])   
+                self.send_data(~self.buffer_red[i + j * wide])  
 
         self.TurnOnDisplay()
 
@@ -192,14 +200,12 @@ class EPD_2in9_B:
             wide =  self.width // 8
         else :
             wide =  self.width // 8 + 1
+            
         self.send_command(0x24)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(colorblack)
+        self.send_data1([colorblack] * high * wide)
+        
         self.send_command(0x26)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(~colorred)
+        self.send_data1([~colorred] * high * wide)
                                 
         self.TurnOnDisplay()
 

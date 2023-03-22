@@ -102,6 +102,12 @@ class EPD_4in2_B:
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
         
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
+        
     def ReadBusy(self):
         print("e-Paper busy")
         while(self.digital_read(self.busy_pin) == 0):      #  LOW: idle, HIGH: busy
@@ -114,7 +120,6 @@ class EPD_4in2_B:
         self.send_command(0x12)
         self.delay_ms(100) 
         self.ReadBusy()
-
             
     def EPD_4IN2B_Init(self):
         self.reset()
@@ -134,14 +139,10 @@ class EPD_4in2_B:
             wide =  self.width // 8 + 1
 
         self.send_command(0x10)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0xff)
+        self.send_data1([0xff] * high * wide)
                 
         self.send_command(0x13)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0xff)
+        self.send_data1([0xff] * high * wide)
 
         
         self.send_command(0x12)
@@ -156,15 +157,11 @@ class EPD_4in2_B:
             wide =  self.width // 8 + 1
                 
         self.send_command(0x10)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(blackImage[i + j * wide])
+        self.send_data1(blackImage)
                 
         self.send_command(0x13)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(redImage[i + j * wide])
-                
+        self.send_data1(redImage)
+
         self.TurnOnDisplay()
         
         
@@ -188,7 +185,7 @@ if __name__=='__main__':
     epd.imagered.text("Pico_ePaper-4.2-B", 5, 40, 0x00)
     epd.imageblack.text("Raspberry Pico", 5, 70, 0x00)
     epd.EPD_4IN2B_Display(epd.buffer_black,epd.buffer_red)
-    epd.delay_ms(500)
+    epd.delay_ms(5000)
     
     epd.imageblack.vline(10, 90, 60, 0x00)
     epd.imagered.vline(90, 90, 60, 0x00)
@@ -197,15 +194,16 @@ if __name__=='__main__':
     epd.imageblack.line(10, 90, 90, 150, 0x00)
     epd.imagered.line(90, 90, 10, 150, 0x00)
     epd.EPD_4IN2B_Display(epd.buffer_black,epd.buffer_red)
-    epd.delay_ms(500)
+    epd.delay_ms(5000)
     
     epd.imageblack.rect(10, 180, 50, 80, 0x00)
     epd.imagered.fill_rect(70, 180, 50, 80, 0x00)
     epd.EPD_4IN2B_Display(epd.buffer_black,epd.buffer_red)
-    epd.delay_ms(500)
+    epd.delay_ms(5000)
 
     epd.EPD_4IN2B_Clear()
     epd.Sleep()
     
 
 
+  

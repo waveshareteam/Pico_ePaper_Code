@@ -1,5 +1,5 @@
 # *****************************************************************************
-# * | File        :	  Pico_ePaper-2.9.py
+# * | File        :      Pico_ePaper-2.9.py
 # * | Author      :   Waveshare team
 # * | Function    :   Electronic paper driver
 # * | Info        :
@@ -62,26 +62,26 @@ WF_PARTIAL_2IN9 = [
     0x22,0x17,0x41,0xB0,0x32,0x36,
 ]
 
-WS_20_30 = [									
-    0x80,	0x66,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x40,	0x0,	0x0,	0x0,
-    0x10,	0x66,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x20,	0x0,	0x0,	0x0,
-    0x80,	0x66,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x40,	0x0,	0x0,	0x0,
-    0x10,	0x66,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x20,	0x0,	0x0,	0x0,
-    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,
-    0x14,	0x8,	0x0,	0x0,	0x0,	0x0,	0x2,					
-    0xA,	0xA,	0x0,	0xA,	0xA,	0x0,	0x1,					
-    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
-    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
-    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
-    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
-    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
-    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
-    0x14,	0x8,	0x0,	0x1,	0x0,	0x0,	0x1,					
-    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x1,					
-    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
-    0x0,	0x0,	0x0,	0x0,	0x0,	0x0,	0x0,					
-    0x44,	0x44,	0x44,	0x44,	0x44,	0x44,	0x0,	0x0,	0x0,			
-    0x22,	0x17,	0x41,	0x0,	0x32,	0x36
+WS_20_30 = [                                    
+    0x80,    0x66,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x40,    0x0,    0x0,    0x0,
+    0x10,    0x66,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x20,    0x0,    0x0,    0x0,
+    0x80,    0x66,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x40,    0x0,    0x0,    0x0,
+    0x10,    0x66,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x20,    0x0,    0x0,    0x0,
+    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,
+    0x14,    0x8,    0x0,    0x0,    0x0,    0x0,    0x2,                    
+    0xA,    0xA,    0x0,    0xA,    0xA,    0x0,    0x1,                    
+    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,                    
+    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,                    
+    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,                    
+    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,                    
+    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,                    
+    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,                    
+    0x14,    0x8,    0x0,    0x1,    0x0,    0x0,    0x1,                    
+    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x1,                    
+    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,                    
+    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,    0x0,                    
+    0x44,    0x44,    0x44,    0x44,    0x44,    0x44,    0x0,    0x0,    0x0,            
+    0x22,    0x17,    0x41,    0x0,    0x32,    0x36
 ]
 
 class EPD_2in9_Portrait(framebuf.FrameBuffer):
@@ -140,6 +140,12 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
         
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
+        
     def ReadBusy(self):
         print("e-Paper busy")
         while(self.digital_read(self.busy_pin) == 1):      #  0: idle, 1: busy
@@ -160,21 +166,20 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
 
     def lut(self, lut):
         self.send_command(0x32)
-        for i in range(0, 153):
-            self.send_data(lut[i])
+        self.send_data1(lut[0:153])
         self.ReadBusy()
 
     def SetLut(self, lut):
         self.lut(lut)
         self.send_command(0x3f)
         self.send_data(lut[153])
-        self.send_command(0x03) 	# gate voltage
+        self.send_command(0x03)     # gate voltage
         self.send_data(lut[154])
-        self.send_command(0x04) 	# source voltage
-        self.send_data(lut[155])	# VSH
-        self.send_data(lut[156])	# VSH2
-        self.send_data(lut[157])	# VSL
-        self.send_command(0x2c)		# VCOM
+        self.send_command(0x04)     # source voltage
+        self.send_data(lut[155])    # VSH
+        self.send_data(lut[156])    # VSH2
+        self.send_data(lut[157])    # VSL
+        self.send_command(0x2c)        # VCOM
         self.send_data(lut[158])
 
     def SetWindow(self, x_start, y_start, x_end, y_end):
@@ -217,7 +222,7 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
 
         self.send_command(0x21) #  Display update control
         self.send_data(0x00)
-        self.send_data(0x80)	
+        self.send_data(0x80)    
     
         self.SetCursor(0, 0)
         self.ReadBusy()
@@ -230,23 +235,17 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         if (image == None):
             return            
         self.send_command(0x24) # WRITE_RAM
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(image[i + j * int(self.width / 8)])   
+        self.send_data1(image)
         self.TurnOnDisplay()
 
     def display_Base(self, image):
         if (image == None):
             return   
         self.send_command(0x24) # WRITE_RAM
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(image[i + j * int(self.width / 8)])
+        self.send_data1(image)
                 
         self.send_command(0x26) # WRITE_RAM
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(image[i + j * int(self.width / 8)])   
+        self.send_data1(image)
                 
         self.TurnOnDisplay()
         
@@ -265,7 +264,7 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         self.send_data(0x00)  
         self.send_data(0x00)  
         self.send_data(0x00) 
-        self.send_data(0x00)  	
+        self.send_data(0x00)      
         self.send_data(0x40)  
         self.send_data(0x00)  
         self.send_data(0x00)   
@@ -284,16 +283,12 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         self.SetCursor(0, 0)
         
         self.send_command(0x24) # WRITE_RAM
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(image[i + j * int(self.width / 8)])
+        self.send_data1(image)
         self.TurnOnDisplay_Partial()
 
     def Clear(self, color):
         self.send_command(0x24) # WRITE_RAM
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(color)
+        self.send_data1([color] * self.height * int(self.width / 8))
         self.TurnOnDisplay()
 
     def sleep(self):
@@ -360,6 +355,12 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
         
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
+        
     def ReadBusy(self):
         print("e-Paper busy")
         while(self.digital_read(self.busy_pin) == 1):      #  0: idle, 1: busy
@@ -380,21 +381,20 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
 
     def lut(self, lut):
         self.send_command(0x32)
-        for i in range(0, 153):
-            self.send_data(lut[i])
+        self.send_data1(lut[0:153])
         self.ReadBusy()
 
     def SetLut(self, lut):
         self.lut(lut)
         self.send_command(0x3f)
         self.send_data(lut[153])
-        self.send_command(0x03) 	# gate voltage
+        self.send_command(0x03)     # gate voltage
         self.send_data(lut[154])
-        self.send_command(0x04) 	# source voltage
-        self.send_data(lut[155])	# VSH
-        self.send_data(lut[156])	# VSH2
-        self.send_data(lut[157])	# VSL
-        self.send_command(0x2c)		# VCOM
+        self.send_command(0x04)     # source voltage
+        self.send_data(lut[155])    # VSH
+        self.send_data(lut[156])    # VSH2
+        self.send_data(lut[157])    # VSL
+        self.send_command(0x2c)        # VCOM
         self.send_data(lut[158])
 
     def SetWindow(self, x_start, y_start, x_end, y_end):
@@ -511,9 +511,7 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
 
     def Clear(self, color):
         self.send_command(0x24) # WRITE_RAM
-        for j in range(int(self.width / 8) - 1, -1, -1):
-            for i in range(0, self.height):
-                self.send_data(color)
+        self.send_data1([color] * self.height * int(self.width / 8))
         self.TurnOnDisplay()
 
     def sleep(self):

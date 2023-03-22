@@ -92,6 +92,12 @@ class EPD_7in5(framebuf.FrameBuffer):
         self.digital_write(self.cs_pin, 0)
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
+        
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
 
     def WaitUntilIdle(self):
         print("e-Paper busy")
@@ -155,15 +161,13 @@ class EPD_7in5(framebuf.FrameBuffer):
         else :
             wide =  self.width // 8 + 1
         
-        self.send_command(0x10) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0xff)
+        self.send_command(0x10)
+        for i in range(0, wide):
+            self.send_data1([0xff] * high)
                 
         self.send_command(0x13) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0x00)
+        for i in range(0, wide):
+            self.send_data1([0x00] * high)
                 
         self.TurnOnDisplay()
         
@@ -175,15 +179,13 @@ class EPD_7in5(framebuf.FrameBuffer):
         else :
             wide =  self.width // 8 + 1
         
-        self.send_command(0x10) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0x00)
+        self.send_command(0x10)
+        for i in range(0, wide):
+            self.send_data1([0x00] * high)
                 
         self.send_command(0x13) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0xff)
+        for i in range(0, wide):
+            self.send_data1([0xff] * high)
                 
         self.TurnOnDisplay()
         
@@ -196,14 +198,12 @@ class EPD_7in5(framebuf.FrameBuffer):
             wide =  self.width // 8 + 1
         
         self.send_command(0x10) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(blackimage[i + j * wide])
+        for i in range(0, wide):
+            self.send_data1(blackimage[(i * high) : ((i+1) * high)])
                 
         self.send_command(0x13) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(blackimage[i + j * wide])
+        for i in range(0, wide):
+            self.send_data1(blackimage[(i * high) : ((i+1) * high)])
                 
         self.TurnOnDisplay()
 
@@ -224,7 +224,7 @@ if __name__=='__main__':
     epd.text("Pico_ePaper-7.5", 5, 40, 0xff)
     epd.text("Raspberry Pico", 5, 70, 0xff)
     epd.display(epd.buffer)
-    epd.delay_ms(500)
+    epd.delay_ms(5000)
     
     epd.vline(10, 90, 60, 0xff)
     epd.vline(120, 90, 60, 0xff)
@@ -233,12 +233,12 @@ if __name__=='__main__':
     epd.line(10, 90, 120, 150, 0xff)
     epd.line(120, 90, 10, 150, 0xff)
     epd.display(epd.buffer)
-    epd.delay_ms(500)
+    epd.delay_ms(5000)
     
     epd.rect(10, 180, 50, 80, 0xff)
     epd.fill_rect(70, 180, 50, 80, 0xff)
     epd.display(epd.buffer)
-    epd.delay_ms(500)
+    epd.delay_ms(5000)
     
     epd.fill_rect(250, 150, 480, 20, 0xff)
     epd.fill_rect(250, 310, 480, 20, 0xff)
@@ -257,7 +257,7 @@ if __name__=='__main__':
     epd.fill_rect(270, 190, 100, 100, 0xff)
     epd.fill_rect(270, 350, 100, 100, 0xff)
     epd.display(epd.buffer)
-    epd.delay_ms(500)
+    epd.delay_ms(5000)
         
     epd.Clear()
     epd.delay_ms(2000)

@@ -60,7 +60,7 @@ WF_PARTIAL_2IN66 =[
 0x00,0x00,0x00,0x22,0x17,0x41,0xB0,0x32,0x36,
 ]
 
-class EPD_2in66(framebuf.FrameBuffer):
+class EPD_2in66:
     def __init__(self):
         self.reset_pin = Pin(RST_PIN, Pin.OUT)
         self.busy_pin = Pin(BUSY_PIN, Pin.IN, Pin.PULL_UP)
@@ -68,14 +68,16 @@ class EPD_2in66(framebuf.FrameBuffer):
         self.width = EPD_WIDTH
         self.height = EPD_HEIGHT
         self.lut = WF_PARTIAL_2IN66
-        
 
         self.spi = SPI(1)
         self.spi.init(baudrate=4000_000)
         self.dc_pin = Pin(DC_PIN, Pin.OUT)
-
-        self.buffer = bytearray(self.height * self.width // 8)
-        super().__init__(self.buffer, self.width, self.height, framebuf.MONO_HLSB)
+        
+        self.buffer_Landscape = bytearray(self.height * self.width // 8)
+        self.buffer_Portrait = bytearray(self.height * self.width // 8)
+        
+        self.image_Landscape = framebuf.FrameBuffer(self.buffer_Landscape, self.height, self.width, framebuf.MONO_VLSB)
+        self.image_Portrait = framebuf.FrameBuffer(self.buffer_Portrait, self.width, self.height, framebuf.MONO_HLSB)
         self.init(0)
 
     # Hardware reset
@@ -99,6 +101,13 @@ class EPD_2in66(framebuf.FrameBuffer):
         self.dc_pin(1)
         self.cs_pin(0)
         self.spi.write(bytearray([data]))
+        self.cs_pin(1)
+        
+    def send_data1(self, buf):
+        self.cs_pin(1)
+        self.dc_pin(1)
+        self.cs_pin(0)
+        self.spi.write(bytearray(buf))
         self.cs_pin(1)
         
     def ReadBusy(self):
@@ -186,17 +195,28 @@ class EPD_2in66(framebuf.FrameBuffer):
         self.SetCursor(1, 295)
         
         self.send_command(0x24) # WRITE_RAM
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(image[i + j * int(self.width / 8)])   
+        self.send_data1(image)
         self.TurnOnDisplay()
-    
+        
+    def display_Landscape(self, image):
+        if(self.width % 8 == 0):
+            Width = self.width // 8
+        else:
+            Width = self.width // 8 +1
+        Height = self.height
+        
+        self.SetCursor(1, 295)
+        
+        self.send_command(0x24)
+        for j in range(Height):
+            for i in range(Width):
+                self.send_data(image[(Width-i-1) * Height + j])
+                
+        self.TurnOnDisplay()
     
     def Clear(self, color):
         self.send_command(0x24) # WRITE_RAM
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(color)
+        self.send_data1([color] * self.height * int(self.width / 8))
         self.TurnOnDisplay()
     
     def sleep(self):
@@ -209,33 +229,42 @@ class EPD_2in66(framebuf.FrameBuffer):
 
 if __name__=='__main__':
     epd = EPD_2in66()
-    epd.Clear(0xff)
-    
-    epd.fill(0xff)
-    epd.text("Waveshare", 13, 10, 0x00)
-    epd.text("Pico_ePaper-2.66", 13, 40, 0x00)
-    epd.text("Raspberry Pico", 13, 70, 0x00)
-    epd.display(epd.buffer)
+#     epd.Clear(0xff)
+#     
+#     epd.image_Portrait.fill(0xff)
+#     epd.image_Portrait.text("Waveshare", 13, 10, 0x00)
+#     epd.image_Portrait.text("Pico_ePaper-2.66", 13, 40, 0x00)
+#     epd.image_Portrait.text("Raspberry Pico", 13, 70, 0x00)
+#     epd.display(epd.buffer_Portrait)
+#     utime.sleep_ms(2000)
+#     
+#     epd.image_Portrait.vline(10, 90, 60, 0x00)
+#     epd.image_Portrait.vline(140, 90, 60, 0x00)
+#     epd.image_Portrait.hline(10, 90, 130, 0x00)
+#     epd.image_Portrait.hline(10, 150, 130, 0x00)
+#     epd.image_Portrait.line(10, 90, 140, 150, 0x00)
+#     epd.image_Portrait.line(140, 90, 10, 150, 0x00)
+#     epd.display(epd.buffer_Portrait)
+#     utime.sleep_ms(2000)
+#     
+#     epd.image_Portrait.rect(10, 180, 60, 80, 0x00)
+#     epd.image_Portrait.fill_rect(80, 180, 60, 80, 0x00)
+#     epd.display(epd.buffer_Portrait)
+#     utime.sleep_ms(2000)
+#     
+#     epd.init(1)
+#     for i in range(0, 10):
+#         epd.image_Portrait.fill_rect(52, 270, 40, 20, 0xff)
+#         epd.image_Portrait.text(str(i), 72, 270, 0x00)
+#         epd.display(epd.buffer_Portrait)
+#         
+#     epd.Clear(0xff)
+    epd.image_Landscape.fill(0xff)
+    epd.image_Landscape.text("Waveshare", 13, 10, 0x00)
+    epd.image_Landscape.text("Pico_ePaper-2.66", 13, 40, 0x00)
+    epd.image_Landscape.text("Raspberry Pico", 13, 70, 0x00)
+    epd.display_Landscape(epd.buffer_Landscape)
     utime.sleep_ms(2000)
-    
-    epd.vline(10, 90, 60, 0x00)
-    epd.vline(140, 90, 60, 0x00)
-    epd.hline(10, 90, 130, 0x00)
-    epd.hline(10, 150, 130, 0x00)
-    epd.line(10, 90, 140, 150, 0x00)
-    epd.line(140, 90, 10, 150, 0x00)
-    epd.display(epd.buffer)
-    utime.sleep_ms(2000)
-    
-    epd.rect(10, 180, 60, 80, 0x00)
-    epd.fill_rect(80, 180, 60, 80, 0x00)
-    utime.sleep_ms(2000)
-    
-    epd.init(1)
-    for i in range(0, 10):
-        epd.fill_rect(52, 270, 40, 20, 0xff)
-        epd.text(str(i), 72, 270, 0x00)
-        epd.display(epd.buffer)
 
     epd.init(0)
     epd.Clear(0xff)

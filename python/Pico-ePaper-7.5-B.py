@@ -95,6 +95,12 @@ class EPD_7in5_B:
         self.digital_write(self.cs_pin, 0)
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
+        
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
 
     def WaitUntilIdle(self):
         print("e-Paper busy")
@@ -163,15 +169,13 @@ class EPD_7in5_B:
         else :
             wide =  self.width // 8 + 1
         
-        self.send_command(0x10) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0xff)
+        self.send_command(0x10)
+        for i in range(0, wide):
+            self.send_data1([0xff] * high)
                 
         self.send_command(0x13) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0x00)
+        for i in range(0, wide):
+            self.send_data1([0x00] * high)
                 
         self.TurnOnDisplay()
         
@@ -184,14 +188,12 @@ class EPD_7in5_B:
             wide =  self.width // 8 + 1
         
         self.send_command(0x10) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0xff)
+        for i in range(0, wide):
+            self.send_data1([0xff] * high)
                 
         self.send_command(0x13) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0xff)
+        for i in range(0, wide):
+            self.send_data1([0xff] * high)
                 
         self.TurnOnDisplay()
         
@@ -204,14 +206,12 @@ class EPD_7in5_B:
             wide =  self.width // 8 + 1
         
         self.send_command(0x10) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0x00)
+        for i in range(0, wide):
+            self.send_data1([0x00] * high)
                 
         self.send_command(0x13) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0x00)
+        for i in range(0, wide):
+            self.send_data1([0x00] * high)
                 
         self.TurnOnDisplay()
         
@@ -225,16 +225,14 @@ class EPD_7in5_B:
         
         # send black data
         self.send_command(0x10) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(self.buffer_black[i + j * wide])
+        for i in range(0, wide):
+            self.send_data1(self.buffer_black[(i * high) : ((i+1) * high)])
             
         # send red data
         self.send_command(0x13) 
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(self.buffer_red[i + j * wide])
-                
+        for i in range(0, wide):
+            self.send_data1(self.buffer_red[(i * high) : ((i+1) * high)])
+            
         self.TurnOnDisplay()
 
 
@@ -255,7 +253,7 @@ if __name__=='__main__':
     epd.imagered.text("Pico_ePaper-7.5-B", 5, 40, 0xff)
     epd.imageblack.text("Raspberry Pico", 5, 70, 0x00)
     epd.display()
-    epd.delay_ms(500)
+    epd.delay_ms(5000)
     
     epd.imageblack.vline(10, 90, 60, 0x00)
     epd.imageblack.vline(120, 90, 60, 0x00)
@@ -264,14 +262,14 @@ if __name__=='__main__':
     epd.imagered.line(10, 90, 120, 150, 0xff)
     epd.imagered.line(120, 90, 10, 150, 0xff)
     epd.display()
-    epd.delay_ms(500)
+    epd.delay_ms(5000)
     
     epd.imageblack.rect(10, 180, 50, 80, 0x00 )
     epd.imageblack.fill_rect(70, 180, 50, 80,0x00 )
     epd.imagered.rect(10, 300, 50, 80, 0xff )
     epd.imagered.fill_rect(70, 300, 50, 80,0xff )
     epd.display()
-    epd.delay_ms(500)
+    epd.delay_ms(5000)
 
     for k in range(0, 3):
         for j in range(0, 3):
@@ -280,7 +278,7 @@ if __name__=='__main__':
             for i in range(0, 5):
                 epd.imagered.fill_rect(200+0+j*200, i*20+100+k*200, 100, 10, 0xff)
     epd.display()
-    epd.delay_ms(500)
+    epd.delay_ms(5000)
 
     epd.Clear()
     epd.delay_ms(2000)

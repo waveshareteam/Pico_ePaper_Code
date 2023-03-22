@@ -94,7 +94,7 @@ class EPD_5in83(framebuf.FrameBuffer):
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
         
-    def send_data2(self, data):
+    def send_data1(self, data):
         self.digital_write(self.dc_pin, 1)
         self.digital_write(self.cs_pin, 0)
         self.spi_writebyte(data)
@@ -150,14 +150,13 @@ class EPD_5in83(framebuf.FrameBuffer):
         if (image == None):
             return         
         self.send_command(0x13) # WRITE_RAM
-        self.send_data2(image)
+        self.send_data1(image)
         self.TurnOnDisplay()
 
     def Clear(self, color):
         self.send_command(0x13) # WRITE_RAM
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(color)
+        for i in range(0, int(self.width / 8)):
+            self.send_data1([color] * self.height)
         self.TurnOnDisplay()
 
     def sleep(self):

@@ -96,7 +96,7 @@ class EPD_5in83_B():
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
         
-    def send_data2(self, data):
+    def send_data1(self, data):
         self.digital_write(self.dc_pin, 1)
         self.digital_write(self.cs_pin, 0)
         self.spi_writebyte(data)
@@ -152,20 +152,19 @@ class EPD_5in83_B():
         if (imageBlack == None or imageRed == None):
             return    
         self.send_command(0x10) # WRITE_RAM
-        self.send_data2(imageBlack)
+        self.send_data1(imageBlack)
         self.send_command(0x13) # WRITE_RAM
-        self.send_data2(imageRed)
+        self.send_data1(imageRed)
         self.TurnOnDisplay()
 
     def Clear(self, colorBalck, colorRed):
         self.send_command(0x10) # WRITE_RAM
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(colorBalck)
+        for i in range(0, int(self.width / 8)):
+            self.send_data1([colorBalck] * self.height)
+            
         self.send_command(0x13) # WRITE_RAM
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(colorRed)
+        for i in range(0, int(self.width / 8)):
+            self.send_data1([colorRed] * self.height)
         self.TurnOnDisplay()
 
     def sleep(self):

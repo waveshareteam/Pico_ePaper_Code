@@ -105,6 +105,12 @@ class EPD_5in65(framebuf.FrameBuffer):
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
         
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
+        
     def BusyHigh(self):
         while(self.digital_read(self.busy_pin) == 0):
             self.delay_ms(1)
@@ -160,8 +166,7 @@ class EPD_5in65(framebuf.FrameBuffer):
         self.send_data(0xC0)
         self.send_command(0x10)
         for i in range(0,int(self.width / 2)):
-            for j in range(0, self.height):
-                self.send_data((color<<4)|color)
+            self.send_data1([(color<<4)|color] * self.height)
 
         self.send_command(0x04)   # 0x04
         self.BusyHigh()
@@ -179,9 +184,9 @@ class EPD_5in65(framebuf.FrameBuffer):
         self.send_data(0x01)
         self.send_data(0xC0)
         self.send_command(0x10)
-        for i in range(0, self.height):
-            for j in range(0, int(self.width // 2)):            
-                self.send_data(image[j+(int(self.width // 2)*i)])
+        
+        for i in range(0, int(self.width // 2)):            
+            self.send_data1(image[(i*self.height):((i+1)*self.height)])
             
         self.send_command(0x04)   # 0x04
         self.BusyHigh()
@@ -233,7 +238,7 @@ if __name__=='__main__':
     epd.text("Pico_ePaper-5.65", 5, 20, epd.Black)
     epd.text("Raspberry Pico", 5, 35, epd.Black)
 #     epd.EPD_5IN65F_Display(epd.buffer)
-#     epd.delay_ms(500)
+#     epd.delay_ms(5000)
     
     epd.vline(10, 60, 60, epd.Black)
     epd.vline(90, 60, 60, epd.Black)
@@ -242,12 +247,12 @@ if __name__=='__main__':
     epd.line(10, 60, 90, 120, epd.Black)
     epd.line(90, 60, 10, 120, epd.Black)
 #     epd.EPD_5IN65F_Display(epd.buffer)
-#     epd.delay_ms(500)
+#     epd.delay_ms(5000)
     
     epd.rect(10, 136, 50, 80, epd.Black)
     epd.fill_rect(70, 136, 50, 80, epd.Black)
 #     epd.EPD_5IN65F_Display(epd.buffer)
-#     epd.delay_ms(500)
+#     epd.delay_ms(5000)
 #    
     epd.text('Black',200,11,epd.Black)
     epd.fill_rect(300, 0, 300, 30, epd.Black)
@@ -266,7 +271,7 @@ if __name__=='__main__':
     epd.text('Clean',200,221,epd.Black)
     epd.fill_rect(300, 210, 300, 30, epd.Clean)
 #     epd.EPD_5IN65F_Display(epd.buffer)
-#     epd.delay_ms(500)
+#     epd.delay_ms(5000)
 
     j = 0
     for i in range(-250,600):
@@ -275,9 +280,9 @@ if __name__=='__main__':
             j = j+1
             j = j%7
     epd.EPD_5IN65F_Display(epd.buffer)
-    epd.delay_ms(500)
-
-
+    epd.delay_ms(5000)
+    
+    epd.EPD_5IN65F_Clear(epd.White)
 
     epd.Sleep()
 

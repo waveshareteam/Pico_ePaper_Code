@@ -207,6 +207,12 @@ class EPD_2IN9_D(framebuf.FrameBuffer):
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
         
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
+        
     def ReadBusy(self):
         print('e-Paper busy')
         busy = 1
@@ -221,24 +227,19 @@ class EPD_2IN9_D(framebuf.FrameBuffer):
         self.send_data(0xB7)
         
         self.send_command(0x20)
-        for count in range(0, 44):
-            self.send_data(self.lut_vcomDC[count])
+        self.send_data1(self.lut_vcomDC[0:44])
             
         self.send_command(0x21)
-        for count in range(0, 42):
-            self.send_data(self.lut_ww[count])
-            
+        self.send_data1(self.lut_ww[0:42])
+        
         self.send_command(0x22)
-        for count in range(0, 42):
-            self.send_data(self.lut_bw[count])
-            
+        self.send_data1(self.lut_bw[0:42])
+
         self.send_command(0x23)
-        for count in range(0, 42):
-            self.send_data(self.lut_wb[count])
+        self.send_data1(self.lut_bb[0:42])
             
         self.send_command(0x24)
-        for count in range(0, 42):
-            self.send_data(self.lut_bb[count])
+        self.send_data1(self.lut_wb[0:42])
           
     
     def SetPartReg(self):
@@ -248,24 +249,19 @@ class EPD_2IN9_D(framebuf.FrameBuffer):
         self.send_data(0xB7)
         
         self.send_command(0x20)
-        for count in range(0, 44):
-            self.send_data(self.lut_vcom1[count])
+        self.send_data1(self.lut_vcom1[0:44])
             
         self.send_command(0x21)
-        for count in range(0, 42):
-            self.send_data(self.lut_ww1[count])
+        self.send_data1(self.lut_ww1[0:42])
             
         self.send_command(0x22)
-        for count in range(0, 42):
-            self.send_data(self.lut_bw1[count])
+        self.send_data1(self.lut_bw1[0:42])
             
         self.send_command(0x23)
-        for count in range(0, 42):
-            self.send_data(self.lut_wb1[count])
+        self.send_data1(self.lut_wb1[0:42])
             
         self.send_command(0x24)
-        for count in range(0, 42):
-            self.send_data(self.lut_bb1[count])
+        self.send_data1(self.lut_bb1[0:42])
             
     
     def TurnOnDisplay(self):
@@ -317,13 +313,10 @@ class EPD_2IN9_D(framebuf.FrameBuffer):
         else :
             wide =  self.width // 8 + 1
         self.send_command(0x10)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0X00)
+        self.send_data1([0x00] * high * wide)
+        
         self.send_command(0x13)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(image[i + j * wide])
+        self.send_data1(image)
             
         self.SetFullReg()
         self.TurnOnDisplay()
@@ -347,9 +340,7 @@ class EPD_2IN9_D(framebuf.FrameBuffer):
         else :
             wide =  self.width // 8 + 1
         self.send_command(0x13)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(image[i + j * wide])
+        self.send_data1(image)
         
         self.TurnOnDisplay()
 
@@ -362,13 +353,10 @@ class EPD_2IN9_D(framebuf.FrameBuffer):
         else :
             wide =  self.width // 8 + 1
         self.send_command(0x10)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(color)
+        self.send_data1([color] * high * wide)
+        
         self.send_command(0x13)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(~color)
+        self.send_data1([~color] * high * wide)
             
         self.SetFullReg()
         self.TurnOnDisplay()

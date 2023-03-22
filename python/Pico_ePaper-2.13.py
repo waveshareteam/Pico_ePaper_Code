@@ -126,7 +126,6 @@ class EPD_2in13(framebuf.FrameBuffer):
         self.digital_write(self.reset_pin, 1)
         self.delay_ms(50)   
 
-
     def send_command(self, command):
         self.digital_write(self.dc_pin, 0)
         self.digital_write(self.cs_pin, 0)
@@ -137,6 +136,12 @@ class EPD_2in13(framebuf.FrameBuffer):
         self.digital_write(self.dc_pin, 1)
         self.digital_write(self.cs_pin, 0)
         self.spi_writebyte([data])
+        self.digital_write(self.cs_pin, 1)
+        
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
         self.digital_write(self.cs_pin, 1)
         
     def ReadBusy(self):
@@ -247,45 +252,33 @@ class EPD_2in13(framebuf.FrameBuffer):
         
     def display(self, image):
         self.send_command(0x24)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(image[i + j * int(self.width / 8)])   
+        self.send_data1(image)
         self.TurnOnDisplay()
         
     def displayPartial(self, image):
         self.send_command(0x24)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(image[i + j * int(self.width / 8)])   
+        self.send_data1(image)
                 
         self.send_command(0x26)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(~image[i + j * int(self.width / 8)])  
+        self.send_data1(image)
         self.TurnOnDisplayPart()
 
     def displayPartBaseImage(self, image):
         self.send_command(0x24)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(image[i + j * int(self.width / 8)])   
+        self.send_data1(image) 
                 
         self.send_command(0x26)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(image[i + j * int(self.width / 8)])  
+        self.send_data1(image)
+        
         self.TurnOnDisplay()
     
     def Clear(self, color):
         self.send_command(0x24)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(color)
+        self.send_data1([color] * self.height * int(self.width / 8))
+        
         self.send_command(0x26)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(color)
-                                
+        self.send_data1([color] * self.height * int(self.width / 8))
+        
         self.TurnOnDisplay()
 
     def sleep(self):

@@ -23,6 +23,7 @@ int main(void)
     // EPD_2in66b_test();
     
     // EPD_2in7_test();
+    // EPD_2in7_V2_test();
 
     // EPD_3in7_test();
 	

@@ -284,6 +284,12 @@ class EPD_4in2:
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
         
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
+        
     def ReadBusy(self):
         print("e-Paper busy")
         while(self.digital_read(self.busy_pin) == 0):      #  LOW: idle, HIGH: busy
@@ -299,72 +305,56 @@ class EPD_4in2:
     
     def EPD_4IN2_SetLut(self):
         self.send_command(0x20)
-        for count in range(0, 36):
-            self.send_data(self.lut_vcom0[count])
+        self.send_data1(self.lut_vcom0[0:36])
             
         self.send_command(0x21)
-        for count in range(0, 36):
-            self.send_data(self.lut_ww[count])
+        self.send_data1(self.lut_ww[0:36])
         
         self.send_command(0x22)
-        for count in range(0, 36):
-            self.send_data(self.lut_bw[count])
+        self.send_data1(self.lut_bw[0:36])
             
         self.send_command(0x23)
-        for count in range(0, 36):
-            self.send_data(self.lut_wb[count])
+        self.send_data1(self.lut_wb[0:36])
             
         self.send_command(0x24)
-        for count in range(0, 36):
-            self.send_data(self.lut_bb[count])
+        self.send_data1(self.lut_bb[0:36])
             
             
     def EPD_4IN2_Partial_SetLut(self):
         self.send_command(0x20)
-        for count in range(0, 44):
-            self.send_data(self.lut_Partial_vcom[count])
+        self.send_data1(self.lut_Partial_vcom[0:44])
             
         self.send_command(0x21)
-        for count in range(0, 42):
-            self.send_data(self.lut_Partial_ww[count])
+        self.send_data1(self.lut_Partial_ww[0:42]) 
         
         self.send_command(0x22)
-        for count in range(0, 42):
-            self.send_data(self.lut_Partial_bw[count])
+        self.send_data1(self.lut_Partial_bw[0:42]) 
             
         self.send_command(0x23)
-        for count in range(0, 42):
-            self.send_data(self.lut_Partial_wb[count])
+        self.send_data1(self.lut_Partial_wb[0:42]) 
             
         self.send_command(0x24)
-        for count in range(0, 42):
-            self.send_data(self.lut_Partial_bb[count])
+        self.send_data1(self.lut_Partial_bb[0:42]) 
             
             
     def EPD_4IN2_4Gray_lut(self):
         self.send_command(0x20)
-        for count in range(0, 42):
-            self.send_data(self.lut_4Gray_vcom[count])
+        self.send_data1(self.lut_4Gray_vcom[0:42]) 
             
         self.send_command(0x21)
-        for count in range(0, 42):
-            self.send_data(self.lut_4Gray_ww[count])
+        self.send_data1(self.lut_4Gray_ww[0:42]) 
         
         self.send_command(0x22)
-        for count in range(0, 42):
-            self.send_data(self.lut_4Gray_bw[count])
+        self.send_data1(self.lut_4Gray_bw[0:42]) 
             
         self.send_command(0x23)
-        for count in range(0, 42):
-            self.send_data(self.lut_4Gray_wb[count])
+        self.send_data1(self.lut_4Gray_wb[0:42]) 
             
         self.send_command(0x24)
-        for count in range(0, 42):
-            self.send_data(self.lut_4Gray_bb[count])
+        self.send_data1(self.lut_4Gray_bb[0:42]) 
             
         self.send_command(0x25)
-        for count in range(0, 42):
-            self.send_data(self.lut_4Gray_ww[count])
+        self.send_data1(self.lut_4Gray_ww[0:42]) 
             
     def EPD_4IN2_Init(self):
         self.reset()
@@ -447,31 +437,20 @@ class EPD_4in2:
             wide =  self.width // 8 + 1
 
         self.send_command(0x10)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0xff)
+        for i in range(0, wide):
+            self.send_data1([0xff] * high)
                 
         self.send_command(0x13)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(0xff)
-
+        for i in range(0, wide):
+            self.send_data1([0xff] * high)
         
         self.send_command(0x12)
         self.delay_ms(10)
         self.TurnOnDisplay()
         
-    def EPD_4IN2_Display(self,Image):
-        high = self.height
-        if( self.width % 8 == 0) :
-            wide =  self.width // 8
-        else :
-            wide =  self.width // 8 + 1
-                
+    def EPD_4IN2_Display(self,Image):                
         self.send_command(0x13)
-        for j in range(0, high):
-            for i in range(0, wide):
-                self.send_data(Image[i + j * Width])
+        self.send_data1(Image)
                 
         self.TurnOnDisplay()
         
@@ -661,5 +640,6 @@ if __name__=='__main__':
 
 
     epd.Sleep()
+
 
 

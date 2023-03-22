@@ -96,6 +96,12 @@ class EPD_2in9_B:
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
         
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
+        
     def ReadBusy(self):
         print('busy')
         self.send_command(0x71)
@@ -130,27 +136,21 @@ class EPD_2in9_B:
         
     def display(self):
         self.send_command(0x10)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(self.buffer_black[i + j * int(self.width / 8)])   
+        self.send_data1(self.buffer_black)
+                
         self.send_command(0x13)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(self.buffer_red[i + j * int(self.width / 8)])   
+        self.send_data1(self.buffer_red)   
 
         self.TurnOnDisplay()
 
     
     def Clear(self, colorblack, colorred):
         self.send_command(0x10)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(colorblack)
+        self.send_data1([colorblack] * self.height * int(self.width / 8))
+                
         self.send_command(0x13)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(colorred)
-                                
+        self.send_data1([colorred] * self.height * int(self.width / 8))
+        
         self.TurnOnDisplay()
 
     def sleep(self):

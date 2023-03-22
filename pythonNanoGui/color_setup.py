@@ -25,6 +25,9 @@ import gc
 ## For Pico-ePaper-2.7
 # from drivers.ePaper2in7 import EPD as SSD
 
+## For Pico-ePaper-2.7_V2
+# from drivers.ePaper2in7V2 import EPD as SSD
+
 ## For Pico-ePaper-2.9
 # from drivers.ePaper2in9 import EPD as SSD
 

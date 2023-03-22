@@ -172,6 +172,12 @@ class EPD_2in13_V3_Portrait(framebuf.FrameBuffer):
         self.digital_write(self.cs_pin, 0)
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
+        
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
     
     '''
     function :Wait until the busy_pin goes LOW
@@ -211,8 +217,7 @@ class EPD_2in13_V3_Portrait(framebuf.FrameBuffer):
     '''
     def LUT(self, lut):
         self.send_command(0x32)
-        for i in range(0,153):
-            self.send_data(lut[i])
+        self.send_data1(lut[0:153])
         self.ReadBusy()
     
     '''
@@ -309,9 +314,7 @@ class EPD_2in13_V3_Portrait(framebuf.FrameBuffer):
     '''
     def Clear(self):
         self.send_command(0x24)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width // 8)):
-                self.send_data(0xFF)
+        self.send_data1([0xff] * self.height * int(self.width / 8))
                 
         self.TurnOnDisplay()    
     
@@ -322,9 +325,7 @@ class EPD_2in13_V3_Portrait(framebuf.FrameBuffer):
     '''
     def display(self, image):
         self.send_command(0x24)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width // 8)):
-                self.send_data(image[i + j * int(self.width / 8)])
+        self.send_data1(image)
                 
         self.TurnOnDisplay()
     
@@ -335,14 +336,10 @@ class EPD_2in13_V3_Portrait(framebuf.FrameBuffer):
     '''
     def Display_Base(self, image):
         self.send_command(0x24)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width // 8)):
-                self.send_data(image[i + j * int(self.width / 8)])
+        self.send_data1(image)
                 
         self.send_command(0x26)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width // 8)):
-                self.send_data(image[i + j * int(self.width / 8)])
+        self.send_data1(image)
                 
         self.TurnOnDisplay()
         
@@ -383,9 +380,7 @@ class EPD_2in13_V3_Portrait(framebuf.FrameBuffer):
         self.SetCursor(0,0)
         
         self.send_command(0x24)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width // 8)):
-                self.send_data(image[i + j * int(self.width / 8)])
+        self.send_data1(image)
 
         self.TurnOnDisplayPart()
     
@@ -454,6 +449,12 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.digital_write(self.cs_pin, 0)
         self.spi_writebyte([data])
         self.digital_write(self.cs_pin, 1)
+        
+    def send_data1(self, buf):
+        self.digital_write(self.dc_pin, 1)
+        self.digital_write(self.cs_pin, 0)
+        self.spi.write(bytearray(buf))
+        self.digital_write(self.cs_pin, 1)
 
     def ReadBusy(self):
         print('busy')
@@ -476,8 +477,7 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
 
     def LUT(self, lut):
         self.send_command(0x32)
-        for i in range(0,153):
-            self.send_data(lut[i])
+        self.send_data1(lut[0:153])
         self.ReadBusy()
 
     def LUT_by_host(self, lut):
@@ -547,9 +547,7 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
 
     def Clear(self):
         self.send_command(0x24)
-        for j in range(int(self.width / 8) - 1, -1, -1):
-            for i in range(0, self.height):
-                self.send_data(0xFF)
+        self.send_data1([0xff] * self.height * int(self.width / 8))
                 
         self.TurnOnDisplay()    
 

@@ -36,6 +36,7 @@ extern const unsigned char flagimage[];
 
 extern const unsigned char gImage_2in13_2[];
 extern const unsigned char gImage_2in9[];
+extern const unsigned char gImage_2in9_4gray[];
 extern const unsigned char gImage_2in9bc_b[];
 extern const unsigned char gImage_2in9bc_ry[];
 

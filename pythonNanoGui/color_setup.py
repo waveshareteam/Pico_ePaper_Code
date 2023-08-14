@@ -18,6 +18,9 @@ import gc
 ## For Pico-ePaper-2.13
 # from drivers.ePaper2in13V3 import EPD as SSD
 
+## For Pico-ePaper-2.13_V4
+# from drivers.ePaper2in13V4 import EPD as SSD
+
 ## For Pico-ePaper-2.13-B
 # from drivers.ePaper2in13bV4 import EPD as SSD
 # from drivers.ePaper2in13bV4 import EPDred as SSDred

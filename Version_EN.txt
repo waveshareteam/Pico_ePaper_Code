@@ -9,3 +9,4 @@
 2021-11-01: Added new program 2.13inch V3 e-Paper routine.
 2022-08-22: Added new program 2.13Binch V4 e-Paper routine.
 2023-03-16: Added new program 2.7inch V2 e-Paper routine.
+2023-08-12: Added new program 2.13inch V4 e-Paper routine.

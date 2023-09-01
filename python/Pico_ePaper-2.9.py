@@ -84,6 +84,28 @@ WS_20_30 = [
     0x22,    0x17,    0x41,    0x0,    0x32,    0x36
 ]
 
+Gray4 = [										
+0x00,	0x60,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,			
+0x20,	0x60,	0x10,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,		
+0x28,	0x60,	0x14,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x2A,	0x60,	0x15,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x00,	0x90,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x00,	0x02,	0x00,	0x05,	0x14,	0x00,	0x00,	
+0x1E,	0x1E,	0x00,	0x00,	0x00,	0x00,	0x01,
+0x00,	0x02,	0x00,	0x05,	0x14,	0x00,	0x00,
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x00,	0x00,	0x00,	0x00,	0x00,	0x00,	0x00,
+0x24,	0x22,	0x22,	0x22,	0x23,	0x32,	0x00,	0x00,	0x00,
+0x22,	0x17,	0x41,	0xAE,	0x32,	0x28		
+]	
+
 class EPD_2in9_Portrait(framebuf.FrameBuffer):
     def __init__(self):
         self.reset_pin = Pin(RST_PIN, Pin.OUT)
@@ -92,15 +114,23 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         self.cs_pin = Pin(CS_PIN, Pin.OUT)
         self.width = EPD_WIDTH
         self.height = EPD_HEIGHT
+
+        self.black = 0x00
+        self.white = 0xff
+        self.darkgray = 0xaa
+        self.grayish = 0x55
         
         self.partial_lut = WF_PARTIAL_2IN9
         self.full_lut = WS_20_30
+        self.Gray4_lut = Gray4
         
         self.spi = SPI(1)
         self.spi.init(baudrate=4000_000)
         self.dc_pin = Pin(DC_PIN, Pin.OUT)
         
         self.buffer = bytearray(self.height * self.width // 8)
+        self.buffer_4Gray = bytearray(self.height * self.width // 4)
+        self.image4Gray = framebuf.FrameBuffer(self.buffer_4Gray, self.width, self.height, framebuf.GS2_HMSB)
         super().__init__(self.buffer, self.width, self.height, framebuf.MONO_HLSB)
         self.init()
 
@@ -230,6 +260,33 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         self.SetLut(self.full_lut)
         # EPD hardware init end
         return 0
+    
+    def init_4Gray(self):
+        self.reset()
+
+        self.ReadBusy()
+        self.send_command(0x12)  #SWRESET
+        self.ReadBusy() 
+
+        self.send_command(0x01) #Driver output control      
+        self.send_data(0x27)
+        self.send_data(0x01)
+        self.send_data(0x00)
+    
+        self.send_command(0x11) #data entry mode       
+        self.send_data(0x03)
+
+        self.SetWindow(8, 0, self.width, self.height-1)
+
+        self.send_command(0x3C)
+        self.send_data(0x04)
+    
+        self.SetCursor(1, 0)
+        self.ReadBusy()
+
+        self.SetLut(self.Gray4_lut)
+        # EPD hardware init end
+        return 0
 
     def display(self, image):
         if (image == None):
@@ -247,6 +304,74 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
         self.send_command(0x26) # WRITE_RAM
         self.send_data1(image)
                 
+        self.TurnOnDisplay()
+
+    def display_4Gray(self, image):
+        self.send_command(0x24)
+        for i in range(0, 4736):
+            temp3=0
+            for j in range(0, 2):
+                temp1 = image[i*2+j]
+                for k in range(0, 2):
+                    temp2 = temp1&0x03 
+                    if(temp2 == 0x03):
+                        temp3 |= 0x00   # white
+                    elif(temp2 == 0x00):
+                        temp3 |= 0x01   # black
+                    elif(temp2 == 0x02):
+                        temp3 |= 0x00   # gray1
+                    else:   # 0x01
+                        temp3 |= 0x01   # gray2
+                    temp3 <<= 1
+
+                    temp1 >>= 2
+                    temp2 = temp1&0x03 
+                    if(temp2 == 0x03):   # white
+                        temp3 |= 0x00
+                    elif(temp2 == 0x00):   # black
+                        temp3 |= 0x01
+                    elif(temp2 == 0x02):
+                        temp3 |= 0x00   # gray1
+                    else:   # 0x01
+                        temp3 |= 0x01   # gray2
+                    
+                    if (( j!=1 ) | ( k!=1 )):
+                        temp3 <<= 1
+                    temp1 >>= 2
+            self.send_data(temp3)
+            
+        self.send_command(0x26)	       
+        for i in range(0, 4736):
+            temp3=0
+            for j in range(0, 2):
+                temp1 = image[i*2+j]
+                for k in range(0, 2):
+                    temp2 = temp1&0x03 
+                    if(temp2 == 0x03):
+                        temp3 |= 0x00   # white
+                    elif(temp2 == 0x00):
+                        temp3 |= 0x01   # black
+                    elif(temp2 == 0x02):
+                        temp3 |= 0x01   # gray1
+                    else:   # 0x01
+                        temp3 |= 0x00   # gray2
+                    temp3 <<= 1
+
+                    temp1 >>= 2
+                    temp2 = temp1&0x03
+                    if(temp2 == 0x03):   # white
+                        temp3 |= 0x00
+                    elif(temp2 == 0x00):   # black
+                        temp3 |= 0x01
+                    elif(temp2 == 0x02):
+                        temp3 |= 0x01   # gray1
+                    else:   # 0x01
+                        temp3 |= 0x00   # gray2  
+                    if(j!=1 or k!=1):                    
+                        temp3 <<= 1
+                    temp1 >>= 2
+            self.send_data(temp3)
+
         self.TurnOnDisplay()
         
     def display_Partial(self, image):
@@ -289,6 +414,8 @@ class EPD_2in9_Portrait(framebuf.FrameBuffer):
     def Clear(self, color):
         self.send_command(0x24) # WRITE_RAM
         self.send_data1([color] * self.height * int(self.width / 8))
+        self.send_command(0x26) # WRITE_RAM
+        self.send_data1([color] * self.height * int(self.width / 8))
         self.TurnOnDisplay()
 
     def sleep(self):
@@ -307,6 +434,7 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
         self.cs_pin = Pin(CS_PIN, Pin.OUT)
         self.width = EPD_WIDTH
         self.height = EPD_HEIGHT
+
         
         self.partial_lut = WF_PARTIAL_2IN9
         self.full_lut = WS_20_30
@@ -469,7 +597,7 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
                 self.send_data(image[i + j * self.height])      
                 
         self.TurnOnDisplay()
-        
+
     def display_Partial(self, image):
         if (image == None):
             return
@@ -511,6 +639,8 @@ class EPD_2in9_Landscape(framebuf.FrameBuffer):
 
     def Clear(self, color):
         self.send_command(0x24) # WRITE_RAM
+        self.send_data1([color] * self.height * int(self.width / 8))
+        self.send_command(0x26) # WRITE_RAM
         self.send_data1([color] * self.height * int(self.width / 8))
         self.TurnOnDisplay()
 
@@ -581,6 +711,18 @@ if __name__=='__main__':
         epd.fill_rect(40, 270, 40, 10, 0xff)
         epd.text(str(i), 60, 270, 0x00)
         epd.display_Partial(epd.buffer)
+
+    epd.init_4Gray()
+    epd.image4Gray.fill_rect(0, 0, 127, 74, epd.black)
+    epd.image4Gray.text('GRAY1',10, 33, epd.white)
+    epd.image4Gray.fill_rect(0, 74, 127, 74, epd.darkgray)
+    epd.image4Gray.text('GRAY2',10, 107, epd.grayish)
+    epd.image4Gray.fill_rect(0, 148, 127, 74, epd.grayish)
+    epd.image4Gray.text('GRAY3',10, 181, epd.darkgray)
+    epd.image4Gray.fill_rect(0, 222, 127, 74, epd.white)
+    epd.image4Gray.text('GRAY4',10, 255, epd.black)
+    epd.display_4Gray(epd.buffer_4Gray)
+    epd.delay_ms(5000)
 
     epd.init()
     epd.Clear(0xff)

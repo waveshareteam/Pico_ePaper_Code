@@ -1,12 +1,13 @@
 /*****************************************************************************
-* | File      	:	  EPD_Test.h
+* | File      	:   EPD_4in2_V2.h
 * | Author      :   Waveshare team
-* | Function    :   e-Paper test Demo
+* | Function    :   4.2inch e-paper V2
 * | Info        :
 *----------------
 * |	This version:   V1.0
-* | Date        :   2019-06-11
-* | Info        :   
+* | Date        :   2023-09-12
+* | Info        :
+* -----------------------------------------------------------------------------
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documnetation files (the "Software"), to deal
@@ -27,47 +28,29 @@
 # THE SOFTWARE.
 #
 ******************************************************************************/
-#ifndef _EPD_TEST_H_
-#define _EPD_TEST_H_
+#ifndef _EPD_4IN2_V2_H_
+#define _EPD_4IN2_V2_H_
 
 #include "DEV_Config.h"
-#include "GUI_Paint.h"
-#include "ImageData.h"
-#include "Debug.h"
-#include <stdlib.h> // malloc() free()
 
-int EPD_2in9_V2_test(void);
-int EPD_2in9bc_test(void);
-int EPD_2in9b_V3_test(void);
-int EPD_2in9d_test(void);
+// Display resolution
+#define EPD_4IN2_V2_WIDTH       400
+#define EPD_4IN2_V2_HEIGHT      300
 
-int EPD_2in13_V2_test(void);
-int EPD_2in13_V3_test(void);
-int EPD_2in13_V4_test(void);
-int EPD_2in13bc_test(void);
-int EPD_2in13b_V3_test(void);
-int EPD_2in13b_V4_test(void);
-int EPD_2in13d_test(void);
+#define Seconds_1_5S      0
+#define Seconds_1S        1
 
-int EPD_2in66_test(void);
-int EPD_2in66b_test(void);
+#define KEY0      15
+#define KEY1      17
 
-int EPD_2in7_test(void);
-int EPD_2in7_V2_test(void);
-
-int EPD_3in7_test(void);
-
-int EPD_4in2_test(void);
-int EPD_4in2_V2_test(void);
-int EPD_4in2b_V2_test(void);
-
-int EPD_5in65f_test(void);
-
-int EPD_5in83_V2_test(void);
-int EPD_5in83b_V2_test(void);
-
-int EPD_7in5_V2_test(void);
-int EPD_7in5b_V2_test(void);
-
+void EPD_4IN2_V2_Init(void);
+void EPD_4IN2_V2_Init_Fast(UBYTE Mode);
+void EPD_4IN2_V2_Init_4Gray(void);
+void EPD_4IN2_V2_Clear(void);
+void EPD_4IN2_V2_Display(UBYTE *Image);
+void EPD_4IN2_V2_Display_Fast(UBYTE *Image);
+void EPD_4IN2_V2_Display_4Gray(UBYTE *Image);
+void EPD_4IN2_V2_PartialDisplay(UBYTE *Image, UWORD Xstart, UWORD Ystart, UWORD Xend, UWORD Yend);
+void EPD_4IN2_V2_Sleep(void);
 
 #endif

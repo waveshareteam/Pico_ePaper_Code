@@ -1,15 +1,13 @@
 /*****************************************************************************
-* | File      	:	EPD_7in5_V2.h
+* | File      	:   EPD_4in2b_V2.h
 * | Author      :   Waveshare team
-* | Function    :   Electronic paper driver
+* | Function    :   4.2inch e-paper b&c
 * | Info        :
 *----------------
-* |	This version:   V3.0
-* | Date        :   2023-12-18
-* | Info        :   
-* 1.Remove:ImageBuff[EPD_HEIGHT * EPD_WIDTH / 8]
-* 2.Change:EPD_Display(UBYTE *Image)
-*   Need to pass parameters: pointer to cached data
+* |	This version:   V1.0
+* | Date        :   2020-11-25
+* | Info        :
+* -----------------------------------------------------------------------------
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documnetation files (the "Software"), to deal
@@ -30,23 +28,18 @@
 # THE SOFTWARE.
 #
 ******************************************************************************/
-#ifndef _EPD_7IN5_V2_H_
-#define _EPD_7IN5_V2_H_
+#ifndef __EPD_4IN2B_V2_OLD_H_
+#define __EPD_4IN2B_V2_OLD_H_
 
 #include "DEV_Config.h"
 
-
 // Display resolution
-#define EPD_7IN5_V2_WIDTH       800
-#define EPD_7IN5_V2_HEIGHT      480
+#define EPD_4IN2B_V2_WIDTH       400
+#define EPD_4IN2B_V2_HEIGHT      300
 
-UBYTE EPD_7IN5_V2_Init(void);
-UBYTE EPD_7IN5_V2_Init_Fast(void);
-UBYTE EPD_7IN5_V2_Init_Part(void);
-void EPD_7IN5_V2_Clear(void);
-void EPD_7IN5_V2_ClearBlack(void);
-void EPD_7IN5_V2_Display(UBYTE *blackimage);
-void EPD_7IN5_V2_Display_Part(UBYTE *blackimage,UDOUBLE x_start, UDOUBLE y_start, UDOUBLE x_end, UDOUBLE y_end);
-void EPD_7IN5_V2_Sleep(void);
+void EPD_4IN2B_V2_Init_1(void);
+void EPD_4IN2B_V2_Clear_1(void);
+void EPD_4IN2B_V2_Display_1(const UBYTE *blackimage, const UBYTE *ryimage);
+void EPD_4IN2B_V2_Sleep_1(void);
 
 #endif

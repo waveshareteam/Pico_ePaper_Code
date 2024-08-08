@@ -713,7 +713,7 @@ if __name__=='__main__':
         epd.display_Partial(epd.buffer)
 
     epd.init_4Gray()
-    epd.image4Gray.fill_rect(0, 0, 127, 74, epd.black)
+    epd.image4Gray.fill_rect(0, 0, 127, 74, epd.black)  
     epd.image4Gray.text('GRAY1',10, 33, epd.white)
     epd.image4Gray.fill_rect(0, 74, 127, 74, epd.darkgray)
     epd.image4Gray.text('GRAY2',10, 107, epd.grayish)

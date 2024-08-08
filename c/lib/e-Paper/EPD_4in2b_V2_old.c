@@ -28,7 +28,7 @@
 # THE SOFTWARE.
 #
 ******************************************************************************/
-#include "EPD_4in2b_V2.h"
+#include "EPD_4in2b_V2_old.h"
 #include "Debug.h"
 
 static uint8_t flag=0;
@@ -56,7 +56,7 @@ static void EPD_4IN2B_V2_SendCommand(UBYTE Reg)
 {
     DEV_Digital_Write(EPD_DC_PIN, 0);
     DEV_Digital_Write(EPD_CS_PIN, 0);
-    DEV_SPI_WriteByte(Reg);
+    DEV_SPI_SendData(Reg);
     DEV_Digital_Write(EPD_CS_PIN, 1);
 }
 
@@ -69,7 +69,7 @@ static void EPD_4IN2B_V2_SendData(UBYTE Data)
 {
     DEV_Digital_Write(EPD_DC_PIN, 1);
     DEV_Digital_Write(EPD_CS_PIN, 0);
-    DEV_SPI_WriteByte(Data);
+    DEV_SPI_SendData(Data);
     DEV_Digital_Write(EPD_CS_PIN, 1);
 }
 
@@ -77,7 +77,7 @@ static void EPD_4IN2B_V2_SendData(UBYTE Data)
 function :	Wait until the busy_pin goes LOW
 parameter:
 ******************************************************************************/
-void EPD_4IN2B_V2_ReadBusy_old(void)
+static void EPD_4IN2B_V2_ReadBusy_old(void)
 {
     Debug("e-Paper busy\r\n");
 	do{
@@ -88,7 +88,7 @@ void EPD_4IN2B_V2_ReadBusy_old(void)
 	Debug("e-Paper busy release\r\n");
 }
 
-void EPD_4IN2B_V2_ReadBusy_new(void)
+static void EPD_4IN2B_V2_ReadBusy_new(void)
 {
     Debug("e-Paper busy\r\n");
     while(DEV_Digital_Read(EPD_BUSY_PIN) == 1) {      //LOW: idle, HIGH: busy
@@ -97,7 +97,7 @@ void EPD_4IN2B_V2_ReadBusy_new(void)
     Debug("e-Paper busy release\r\n");
 }
 
-void EPD_4IN2B_V2_ReadBusy(void)
+static void EPD_4IN2B_V2_ReadBusy(void)
 {
     if(flag == 0)
         EPD_4IN2B_V2_ReadBusy_new();
@@ -141,7 +141,7 @@ static void EPD_4IN2B_V2_SetCursor(UWORD Xstart, UWORD Ystart)
 function :	Initialize the e-Paper register
 parameter:
 ******************************************************************************/
-void EPD_4IN2B_V2_Init_old(void)
+void EPD_4IN2B_V2_Init_old_1(void)
 {
     EPD_4IN2B_V2_Reset();
 
@@ -153,7 +153,7 @@ void EPD_4IN2B_V2_Init_old(void)
     EPD_4IN2B_V2_SendData(0x0F);
 }
 
-void EPD_4IN2B_V2_Init_new(void)
+void EPD_4IN2B_V2_Init_new_1(void)
 {
     EPD_4IN2B_V2_Reset();
 
@@ -182,30 +182,28 @@ void EPD_4IN2B_V2_Init_new(void)
     EPD_4IN2B_V2_ReadBusy();
 }
 
-void EPD_4IN2B_V2_Init()
+void EPD_4IN2B_V2_Init_1()
 {
     uint8_t i=0;
     EPD_4IN2B_V2_Reset();
-    
-    DEV_GPIO_Init_1();
+
     DEV_Digital_Write(EPD_DC_PIN, 0);
     DEV_SPI_SendData(0x2F);
     DEV_Delay_ms(50);
     
     DEV_Digital_Write(EPD_DC_PIN, 1);
     i = DEV_SPI_ReadData();
-    printf("%02x\n",i);
-    
-    DEV_SPI_Init();
+    // printf("%02x\n",i);
+
     if(i == 0x01)
     {
         flag = 0;
-        EPD_4IN2B_V2_Init_new();
+        EPD_4IN2B_V2_Init_new_1();
     }
     else
     {
         flag = 1;
-        EPD_4IN2B_V2_Init_old();
+        EPD_4IN2B_V2_Init_old_1();
     }
 }
 
@@ -215,7 +213,7 @@ void EPD_4IN2B_V2_Init()
 function :	Clear screen
 parameter:
 ******************************************************************************/
-void EPD_4IN2B_V2_Clear_old(void)
+void EPD_4IN2B_V2_Clear_old_1(void)
 {
     UWORD Width, Height;
     Width = (EPD_4IN2B_V2_WIDTH % 8 == 0)? (EPD_4IN2B_V2_WIDTH / 8 ): (EPD_4IN2B_V2_WIDTH / 8 + 1);
@@ -231,7 +229,7 @@ void EPD_4IN2B_V2_Clear_old(void)
     EPD_4IN2B_V2_SendCommand(0x13);
     for (UWORD j = 0; j < Height; j++) {
         for (UWORD i = 0; i < Width; i++) {
-            EPD_4IN2B_V2_SendData(0x00);
+            EPD_4IN2B_V2_SendData(0xFF);
         }
     }
 
@@ -241,7 +239,7 @@ void EPD_4IN2B_V2_Clear_old(void)
 }
 
 
-void EPD_4IN2B_V2_Clear_new(void)
+void EPD_4IN2B_V2_Clear_new_1(void)
 {
     UWORD Width, Height;
     Width = (EPD_4IN2B_V2_WIDTH % 8 == 0)? (EPD_4IN2B_V2_WIDTH / 8 ): (EPD_4IN2B_V2_WIDTH / 8 + 1);
@@ -267,19 +265,19 @@ void EPD_4IN2B_V2_Clear_new(void)
     EPD_4IN2B_V2_ReadBusy();
 }
 
-void EPD_4IN2B_V2_Clear(void)
+void EPD_4IN2B_V2_Clear_1(void)
 {
     if(flag == 0)
-        EPD_4IN2B_V2_Clear_new();
+        EPD_4IN2B_V2_Clear_new_1();
     else
-        EPD_4IN2B_V2_Clear_old();
+        EPD_4IN2B_V2_Clear_old_1();
 }
 
 /******************************************************************************
 function :	Sends the image buffer in RAM to e-Paper and displays
 parameter:
 ******************************************************************************/
-void EPD_4IN2B_V2_Display_old(const UBYTE *blackimage, const UBYTE *ryimage)
+void EPD_4IN2B_V2_Display_old_1(const UBYTE *blackimage, const UBYTE *ryimage)
 {
     UWORD Width, Height;
     Width = (EPD_4IN2B_V2_WIDTH % 8 == 0)? (EPD_4IN2B_V2_WIDTH / 8 ): (EPD_4IN2B_V2_WIDTH / 8 + 1);
@@ -295,7 +293,7 @@ void EPD_4IN2B_V2_Display_old(const UBYTE *blackimage, const UBYTE *ryimage)
     EPD_4IN2B_V2_SendCommand(0x13);
     for (UWORD j = 0; j < Height; j++) {
         for (UWORD i = 0; i < Width; i++) {
-            EPD_4IN2B_V2_SendData(~ryimage[i + j * Width]);
+            EPD_4IN2B_V2_SendData(ryimage[i + j * Width]);
         }
     }
 
@@ -304,7 +302,7 @@ void EPD_4IN2B_V2_Display_old(const UBYTE *blackimage, const UBYTE *ryimage)
     EPD_4IN2B_V2_ReadBusy();
 }
 
-void EPD_4IN2B_V2_Display_new(const UBYTE *blackimage, const UBYTE *ryimage)
+void EPD_4IN2B_V2_Display_new_1(const UBYTE *blackimage, const UBYTE *ryimage)
 {
     UWORD Width, Height;
     Width = (EPD_4IN2B_V2_WIDTH % 8 == 0)? (EPD_4IN2B_V2_WIDTH / 8 ): (EPD_4IN2B_V2_WIDTH / 8 + 1);
@@ -330,19 +328,19 @@ void EPD_4IN2B_V2_Display_new(const UBYTE *blackimage, const UBYTE *ryimage)
     EPD_4IN2B_V2_ReadBusy();
 }
 
-void EPD_4IN2B_V2_Display(const UBYTE *blackimage, const UBYTE *ryimage)
+void EPD_4IN2B_V2_Display_1(const UBYTE *blackimage, const UBYTE *ryimage)
 {
     if(flag == 0)
-        EPD_4IN2B_V2_Display_new(blackimage, ryimage);
+        EPD_4IN2B_V2_Display_new_1(blackimage, ryimage);
     else
-        EPD_4IN2B_V2_Display_old(blackimage, ryimage);
+        EPD_4IN2B_V2_Display_old_1(blackimage, ryimage);
 }
 
 /******************************************************************************
 function :	Enter sleep mode
 parameter:
 ******************************************************************************/
-void EPD_4IN2B_V2_Sleep_old(void)
+void EPD_4IN2B_V2_Sleep_old_1(void)
 {
     EPD_4IN2B_V2_SendCommand(0X50);  	
     EPD_4IN2B_V2_SendData(0xf7);
@@ -351,16 +349,16 @@ void EPD_4IN2B_V2_Sleep_old(void)
     EPD_4IN2B_V2_SendCommand(0x07);  
     EPD_4IN2B_V2_SendData(0XA5);
 }
-void EPD_4IN2B_V2_Sleep_new(void)
+void EPD_4IN2B_V2_Sleep_new_1(void)
 {
     EPD_4IN2B_V2_SendCommand(0X10);  	//deep sleep
     EPD_4IN2B_V2_SendData(0x03);
 }
 
-void EPD_4IN2B_V2_Sleep(void)
+void EPD_4IN2B_V2_Sleep_1(void)
 {
     if(flag == 0)
-        EPD_4IN2B_V2_Sleep_new();
+        EPD_4IN2B_V2_Sleep_new_1();
     else
-        EPD_4IN2B_V2_Sleep_old();
+        EPD_4IN2B_V2_Sleep_old_1();
 }

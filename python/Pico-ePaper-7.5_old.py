@@ -113,92 +113,45 @@ class EPD_7in5(framebuf.FrameBuffer):
         self.WaitUntilIdle()
         
     def init(self):
+        # EPD hardware init start     
         self.reset()
         
-        self.send_command(0x06)     # btst
-        self.send_data(0x17)
-        self.send_data(0x17)
-        self.send_data(0x28)        # If an exception is displayed, try using 0x38
-        self.send_data(0x17)
-        
-        self.send_command(0x01)			#POWER SETTING
+        self.send_command(0x01)  # POWER SETTING
         self.send_data(0x07)
-        self.send_data(0x07)    #VGH=20V,VGL=-20V
-        self.send_data(0x28)		#VDH=15V
-        self.send_data(0x17)		#VDL=-15V
-
-        self.send_command(0x04) #POWER ON
+        self.send_data(0x07)     # VGH=20V,VGL=-20V
+        self.send_data(0x3f)     # VDH=15V
+        self.send_data(0x3f)     # VDL=-15V
+        
+        self.send_command(0x04)  # POWER ON
         self.delay_ms(100)
         self.WaitUntilIdle()
 
-        self.send_command(0X00)			#PANNEL SETTING
-        self.send_data(0x1F)   #KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
+        self.send_command(0X00)   # PANNEL SETTING
+        self.send_data(0x1F)      # KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
 
-        self.send_command(0x61)        	#tres
-        self.send_data(0x03)		#source 800
+        self.send_command(0x61)     # tres
+        self.send_data(0x03)     # source 800
         self.send_data(0x20)
-        self.send_data(0x01)		#gate 480
+        self.send_data(0x01)     # gate 480
         self.send_data(0xE0)
 
         self.send_command(0X15)
         self.send_data(0x00)
 
-        self.send_command(0X50)			#VCOM AND DATA INTERVAL SETTING
+        self.send_command(0X50)     # VCOM AND DATA INTERVAL SETTING
         self.send_data(0x10)
-        self.send_data(0x07)
+        self.send_data(0x00)
 
-        self.send_command(0X60)			#TCON SETTING
+        self.send_command(0X60)     # TCON SETTING
         self.send_data(0x22)
 
-        # EPD hardware init end
-        return 0
-    
-    def init_fast(self):
-        self.reset()
+        self.send_command(0x65)     # Resolution setting
+        self.send_data(0x00)
+        self.send_data(0x00)     # 800*480
+        self.send_data(0x00)
+        self.send_data(0x00)
         
-        self.send_command(0X00)			#PANNEL SETTING
-        self.send_data(0x1F)   #KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
-
-        self.send_command(0X50)			#VCOM AND DATA INTERVAL SETTING
-        self.send_data(0x10)
-        self.send_data(0x07)
-
-        self.send_command(0x04) #POWER ON
-        self.delay_ms(100) 
-        self.WaitUntilIdle()        #waiting for the electronic paper IC to release the idle signal
-
-        #Enhanced display drive(Add 0x06 command)
-        self.send_command(0x06)			#Booster Soft Start 
-        self.send_data (0x27)
-        self.send_data (0x27)   
-        self.send_data (0x18)		
-        self.send_data (0x17)		
-
-        self.send_command(0xE0)
-        self.send_data(0x02)
-        self.send_command(0xE5)
-        self.send_data(0x5A)
-
-        # EPD hardware init end
-        return 0
-    
-    def init_part(self):
-        self.reset()
-
-        self.send_command(0X00)			#PANNEL SETTING
-        self.send_data(0x1F)   #KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
-
-        self.send_command(0x04) #POWER ON
-        self.delay_ms(100) 
-        self.WaitUntilIdle()        #waiting for the electronic paper IC to release the idle signal
-
-        self.send_command(0xE0)
-        self.send_data(0x02)
-        self.send_command(0xE5)
-        self.send_data(0x6E)
-
-        # EPD hardware init end
-        return 0
+        return 0;
 
     def Clear(self):
         
@@ -243,60 +196,16 @@ class EPD_7in5(framebuf.FrameBuffer):
             wide =  self.width // 8
         else :
             wide =  self.width // 8 + 1
-                       
+        
         self.send_command(0x10) 
         for i in range(0, wide):
             self.send_data1(blackimage[(i * high) : ((i+1) * high)])
-        
+                
         self.send_command(0x13) 
-        for j in range(high):
-            for i in range(wide):
-                self.send_data(~blackimage[i + j * wide])
+        for i in range(0, wide):
+            self.send_data1(blackimage[(i * high) : ((i+1) * high)])
                 
         self.TurnOnDisplay()
-        
-    def display_Partial(self, Image, Xstart, Ystart, Xend, Yend):
-        if((Xstart % 8 + Xend % 8 == 8 & Xstart % 8 > Xend % 8) | Xstart % 8 + Xend % 8 == 0 | (Xend - Xstart)%8 == 0):
-            Xstart = Xstart // 8 * 8
-            Xend = Xend // 8 * 8
-        else:
-            Xstart = Xstart // 8 * 8
-            if Xend % 8 == 0:
-                Xend = Xend // 8 * 8
-            else:
-                Xend = Xend // 8 * 8 + 1
-                
-        Width = (Xend - Xstart) // 8
-        Height = Yend - Ystart
-	
-        self.send_command(0x50)
-        self.send_data(0xA9)
-        self.send_data(0x07)
-
-        self.send_command(0x91)		#This command makes the display enter partial mode
-        self.send_command(0x90)		#resolution setting
-        self.send_data(Xstart//256)
-        self.send_data(Xstart%256)   #x-start    
-
-        self.send_data((Xend-1)//256)		
-        self.send_data((Xend-1)%256)  #x-end	
-
-        self.send_data(Ystart//256)  #
-        self.send_data(Ystart%256)   #y-start    
-
-        self.send_data((Yend-1)//256)		
-        self.send_data((Yend-1)%256)  #y-end
-        self.send_data(0x01)
-                       
-        self.send_command(0x13) 
-        for j in range(Height):
-            for i in range(Width):
-                self.send_data(~Image[i + j * Width])
-        
-
-        self.send_command(0x12)
-        self.delay_ms(100)
-        self.WaitUntilIdle()
 
 
     def sleep(self):
@@ -309,54 +218,47 @@ if __name__=='__main__':
     epd = EPD_7in5()
     epd.Clear()
     
-    epd.fill(0xFF)
+    epd.fill(0x00)
     
-    epd.text("Waveshare", 5, 10, 0x00)
-    epd.text("Pico_ePaper-7.5", 5, 40, 0x00)
-    epd.text("Raspberry Pico", 5, 70, 0x00)
+    epd.text("Waveshare", 5, 10, 0xff)
+    epd.text("Pico_ePaper-7.5", 5, 40, 0xff)
+    epd.text("Raspberry Pico", 5, 70, 0xff)
     epd.display(epd.buffer)
     epd.delay_ms(5000)
     
-    epd.vline(10, 90, 60, 0x00)
-    epd.vline(120, 90, 60, 0x00)
-    epd.hline(10, 90, 110, 0x00)
-    epd.hline(10, 150, 110, 0x00)
-    epd.line(10, 90, 120, 150, 0x00)
-    epd.line(120, 90, 10, 150, 0x00)
+    epd.vline(10, 90, 60, 0xff)
+    epd.vline(120, 90, 60, 0xff)
+    epd.hline(10, 90, 110, 0xff)
+    epd.hline(10, 150, 110, 0xff)
+    epd.line(10, 90, 120, 150, 0xff)
+    epd.line(120, 90, 10, 150, 0xff)
     epd.display(epd.buffer)
     epd.delay_ms(5000)
     
-    epd.rect(10, 180, 50, 80, 0x00)
-    epd.fill_rect(70, 180, 50, 80, 0x00)
+    epd.rect(10, 180, 50, 80, 0xff)
+    epd.fill_rect(70, 180, 50, 80, 0xff)
     epd.display(epd.buffer)
     epd.delay_ms(5000)
     
-    epd.fill_rect(250, 150, 480, 20, 0x00)
-    epd.fill_rect(250, 310, 480, 20, 0x00)
-    epd.fill_rect(400, 0, 20, 480, 0x00)
-    epd.fill_rect(560, 0, 20, 480, 0x00)
+    epd.fill_rect(250, 150, 480, 20, 0xff)
+    epd.fill_rect(250, 310, 480, 20, 0xff)
+    epd.fill_rect(400, 0, 20, 480, 0xff)
+    epd.fill_rect(560, 0, 20, 480, 0xff)
 
     for j in range(0, 3):
         for i in range(0, 15):
-            epd.line(270+j*160+i, 20+j*160, 375+j*160+i, 140+j*160, 0x00)
+            epd.line(270+j*160+i, 20+j*160, 375+j*160+i, 140+j*160, 0xff)
         for i in range(0, 15):
-            epd.line(375+j*160+i, 20+j*160, 270+j*160+i, 140+j*160, 0x00)
+            epd.line(375+j*160+i, 20+j*160, 270+j*160+i, 140+j*160, 0xff)
         for i in range(0, 15):
-            epd.line(270+j*160, 20+j*160+i, 390+j*160, 125+j*160+i, 0x00)
+            epd.line(270+j*160, 20+j*160+i, 390+j*160, 125+j*160+i, 0xff)
         for i in range(0, 15):
-            epd.line(270+j*160, 125+j*160+i, 390+j*160, 20+j*160+i, 0x00)        
-    epd.fill_rect(270, 190, 100, 100, 0x00)
-    epd.fill_rect(270, 350, 100, 100, 0x00)
+            epd.line(270+j*160, 125+j*160+i, 390+j*160, 20+j*160+i, 0xff)        
+    epd.fill_rect(270, 190, 100, 100, 0xff)
+    epd.fill_rect(270, 350, 100, 100, 0xff)
     epd.display(epd.buffer)
     epd.delay_ms(5000)
-    
-    # epd.init_part()
-    # for i in range(0, 10):
-        # epd.fill_rect(40, 260, 40, 10, 0x00)
-        # epd.text(str(i), 60, 260, 0xFF)
-        # epd.display_Partial(epd.buffer, 0, 0, 800, 480)
-     
-    epd.init() 
+        
     epd.Clear()
     epd.delay_ms(2000)
     print("sleep")

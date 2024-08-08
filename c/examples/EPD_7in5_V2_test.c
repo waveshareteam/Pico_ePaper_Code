@@ -55,6 +55,7 @@ int EPD_7in5_V2_test(void)
     Paint_NewImage(BlackImage, EPD_7IN5_V2_WIDTH, EPD_7IN5_V2_HEIGHT, 0, WHITE);     
 
 #if 1   // show image for array   
+    EPD_7IN5_V2_Init_Fast();
     printf("show image for array\r\n");
     Paint_SelectImage(BlackImage);
     Paint_Clear(WHITE);
@@ -65,6 +66,7 @@ int EPD_7in5_V2_test(void)
 
 #if 1   // Drawing on the image
     //1.Select Image
+    EPD_7IN5_V2_Init();
     printf("SelectImage:BlackImage\r\n");
     Paint_SelectImage(BlackImage);
     Paint_Clear(WHITE);
@@ -86,7 +88,7 @@ int EPD_7in5_V2_test(void)
     Paint_DrawString_EN(10, 20, "hello world", &Font12, WHITE, BLACK);
     Paint_DrawNum(10, 33, 123456789, &Font12, BLACK, WHITE);
     Paint_DrawNum(10, 50, 987654321, &Font16, WHITE, BLACK);
-    Paint_DrawString_CN(130, 0, "你好Abc", &Font12CN, BLACK, WHITE);
+    Paint_DrawString_CN(130, 0, " 你好abc", &Font12CN, BLACK, WHITE);
     Paint_DrawString_CN(130, 20, "微雪电子", &Font24CN, WHITE, BLACK);
 
     printf("EPD_Display\r\n");
@@ -94,7 +96,47 @@ int EPD_7in5_V2_test(void)
     DEV_Delay_ms(2000);
 #endif
 
+#if 1   //Partial refresh, example shows time
+    EPD_7IN5_V2_Init_Part();
+	Paint_NewImage(BlackImage, Font20.Width * 7, Font20.Height, 0, WHITE);
+    Debug("Partial refresh\r\n");
+    Paint_SelectImage(BlackImage);
+    Paint_Clear(WHITE);
+	
+    PAINT_TIME sPaint_time;
+    sPaint_time.Hour = 12;
+    sPaint_time.Min = 34;
+    sPaint_time.Sec = 56;
+    UBYTE num = 10;
+    for (;;) {
+        sPaint_time.Sec = sPaint_time.Sec + 1;
+        if (sPaint_time.Sec == 60) {
+            sPaint_time.Min = sPaint_time.Min + 1;
+            sPaint_time.Sec = 0;
+            if (sPaint_time.Min == 60) {
+                sPaint_time.Hour =  sPaint_time.Hour + 1;
+                sPaint_time.Min = 0;
+                if (sPaint_time.Hour == 24) {
+                    sPaint_time.Hour = 0;
+                    sPaint_time.Min = 0;
+                    sPaint_time.Sec = 0;
+                }
+            }
+        }
+        Paint_ClearWindows(0, 0, Font20.Width * 7, Font20.Height, WHITE);
+        Paint_DrawTime(0, 0, &sPaint_time, &Font20, WHITE, BLACK);
+
+        num = num - 1;
+        if(num == 0) {
+            break;
+        }
+		EPD_7IN5_V2_Display_Part(BlackImage, 150, 80, 150 + Font20.Width * 7, 80 + Font20.Height);
+        DEV_Delay_ms(500);//Analog clock 1s
+    }
+#endif
+
     printf("Clear...\r\n");
+    EPD_7IN5_V2_Init();
     EPD_7IN5_V2_Clear();
 
     printf("Goto Sleep...\r\n");

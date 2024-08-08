@@ -79,6 +79,10 @@ void DEV_Delay_ms(UDOUBLE xms);
 
 UBYTE DEV_Module_Init(void);
 void DEV_Module_Exit(void);
+void DEV_GPIO_Init_1(void);
+void DEV_SPI_Init(void);
+void DEV_SPI_SendData(UBYTE Reg);
+UBYTE DEV_SPI_ReadData(void);
 
 
 #endif

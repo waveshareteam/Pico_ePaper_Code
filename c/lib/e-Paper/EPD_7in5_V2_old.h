@@ -4,7 +4,7 @@
 * | Function    :   Electronic paper driver
 * | Info        :
 *----------------
-* |	This version:   V3.0
+* |	This version:   V1.0
 * | Date        :   2023-12-18
 * | Info        :   
 * 1.Remove:ImageBuff[EPD_HEIGHT * EPD_WIDTH / 8]
@@ -30,9 +30,10 @@
 # THE SOFTWARE.
 #
 ******************************************************************************/
-#ifndef _EPD_7IN5_V2_H_
-#define _EPD_7IN5_V2_H_
+#ifndef _EPD_7IN5_V2_OLD_H_
+#define _EPD_7IN5_V2_OLD_H_
 
+#include "Debug.h"
 #include "DEV_Config.h"
 
 
@@ -40,13 +41,16 @@
 #define EPD_7IN5_V2_WIDTH       800
 #define EPD_7IN5_V2_HEIGHT      480
 
-UBYTE EPD_7IN5_V2_Init(void);
-UBYTE EPD_7IN5_V2_Init_Fast(void);
-UBYTE EPD_7IN5_V2_Init_Part(void);
-void EPD_7IN5_V2_Clear(void);
-void EPD_7IN5_V2_ClearBlack(void);
-void EPD_7IN5_V2_Display(UBYTE *blackimage);
-void EPD_7IN5_V2_Display_Part(UBYTE *blackimage,UDOUBLE x_start, UDOUBLE y_start, UDOUBLE x_end, UDOUBLE y_end);
-void EPD_7IN5_V2_Sleep(void);
+UBYTE EPD_7IN5_V2_Init_old(void);
+UBYTE EPD_7IN5_V2_Init_Fast_old(void);
+UBYTE EPD_7IN5_V2_Init_Partial_old(void);
+void EPD_7IN5_V2_Clear_old(void);
+void EPD_7IN5_V2_ClearBlack_old(void);
+void EPD_7IN5_V2_Display_old(const UBYTE *blackimage);
+void EPD_7IN5_V2_SendHalfImage_old(const UBYTE *Image); 
+void EPD_7IN5_V2_WritePicture_old(const UBYTE *Image);
+void EPD_7IN5_V2_DisplayPart_old(const UBYTE *Image, UWORD xstart, UWORD ystart, UWORD image_width, UWORD image_heigh);
+void EPD_7IN5_V2_Display_Partial_old(UBYTE *blackimage,UDOUBLE x_start, UDOUBLE y_start, UDOUBLE x_end, UDOUBLE y_end);
+void EPD_7IN5_V2_Sleep_old(void);
 
 #endif

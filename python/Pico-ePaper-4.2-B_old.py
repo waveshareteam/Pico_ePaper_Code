@@ -232,7 +232,7 @@ class EPD_4in2_B:
             self.send_data1([0xff] * high * wide)
                     
             self.send_command(0x13)
-            self.send_data1([0x00] * high * wide)
+            self.send_data1([0xff] * high * wide)
 
         self.TurnOnDisplay()
         
@@ -257,9 +257,7 @@ class EPD_4in2_B:
             self.send_data1(blackImage)
                     
             self.send_command(0x13)
-            for j in range(0, high):
-                for i in range(0, wide):
-                    self.send_data(~redImage[i + j * wide]) 
+            self.send_data1(redImage)
 
         self.TurnOnDisplay()
         

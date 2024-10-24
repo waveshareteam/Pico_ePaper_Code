@@ -33,7 +33,7 @@ BUSY	->		13
         computer through the Micro USB cable, and then release the button.
         After connecting, the computer will automatically recognize a removable disk (RPI-RP2)
         
-    2): Copy the rp2-pico-20210418-v1.15.uf2 file in the python directory to the recognized 
+    2): Copy the Pico.uf2 / Pico 2.uf2  file in the python directory to the recognized 
         removable disk (RPI-RP2)
     
     3): Update Thonny IDE

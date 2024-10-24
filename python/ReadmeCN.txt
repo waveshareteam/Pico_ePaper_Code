@@ -30,7 +30,7 @@ BUSY	->		13
     1): 按住Pico板上的按键，将pico通过Micro USB线接到电脑的USB接口，然后松开按键。
         接入之后，电脑会自动识别到一个可移动盘（RPI-RP2）
         
-    2): 将python目录中rp2-pico-20210418-v1.15.uf2 文件复制到识别的可移动盘（RPI-RP2）中
+    2): 将python目录中Pico.uf2 / Pico 2.uf2 文件复制到识别的可移动盘（RPI-RP2）中
     
     3): 更新Thonny IDE
         sudo apt upgrade thonny

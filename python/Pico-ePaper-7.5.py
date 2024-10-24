@@ -40,7 +40,7 @@ DC_PIN          = 8
 CS_PIN          = 9
 BUSY_PIN        = 13
 
-class EPD_7in5(framebuf.FrameBuffer):
+class EPD_7in5:
     def __init__(self):
         self.reset_pin = Pin(RST_PIN, Pin.OUT)
         
@@ -49,12 +49,20 @@ class EPD_7in5(framebuf.FrameBuffer):
         self.width = EPD_WIDTH
         self.height = EPD_HEIGHT
         
+        self.black = 0x00
+        self.white = 0xff
+        self.darkgray = 0xaa
+        self.grayish = 0x55
+
         self.spi = SPI(1)
         self.spi.init(baudrate=4000_000)
         self.dc_pin = Pin(DC_PIN, Pin.OUT)
         
-        self.buffer = bytearray(self.height * self.width // 8)
-        super().__init__(self.buffer, self.width, self.height, framebuf.MONO_HLSB)
+        self.buffer_1Gray = bytearray(self.height * self.width // 8)
+        self.buffer_4Gray = bytearray(self.height * self.width // 4)
+        
+        self.image1Gray = framebuf.FrameBuffer(self.buffer_1Gray, self.width, self.height, framebuf.MONO_HLSB)
+        self.image4Gray = framebuf.FrameBuffer(self.buffer_4Gray, self.width, self.height, framebuf.GS2_HMSB)
         self.init()
 
     def digital_write(self, pin, value):
@@ -143,9 +151,16 @@ class EPD_7in5(framebuf.FrameBuffer):
         self.send_command(0X15)
         self.send_data(0x00)
 
-        self.send_command(0X50)			#VCOM AND DATA INTERVAL SETTING
+        # If the screen appears gray, use the annotated initialization command
+        self.send_command(0X50)
         self.send_data(0x10)
         self.send_data(0x07)
+        # self.send_command(0X50)
+        # self.send_data(0x10)
+        # self.send_data(0x17)
+        # self.send_command(0X52)		
+        # self.send_data(0x03)
+
 
         self.send_command(0X60)			#TCON SETTING
         self.send_data(0x22)
@@ -159,9 +174,16 @@ class EPD_7in5(framebuf.FrameBuffer):
         self.send_command(0X00)			#PANNEL SETTING
         self.send_data(0x1F)   #KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
 
-        self.send_command(0X50)			#VCOM AND DATA INTERVAL SETTING
+        # If the screen appears gray, use the annotated initialization command
+        self.send_command(0X50)
         self.send_data(0x10)
         self.send_data(0x07)
+        # self.send_command(0X50)
+        # self.send_data(0x10)
+        # self.send_data(0x17)
+        # self.send_command(0X52)		
+        # self.send_data(0x03)
+
 
         self.send_command(0x04) #POWER ON
         self.delay_ms(100) 
@@ -196,6 +218,37 @@ class EPD_7in5(framebuf.FrameBuffer):
         self.send_data(0x02)
         self.send_command(0xE5)
         self.send_data(0x6E)
+
+        # EPD hardware init end
+        return 0
+    
+    # The feature will only be available on screens sold after 24/10/23
+    def init_4Gray(self):
+        # EPD hardware init start
+        self.reset()
+
+        self.send_command(0X00)			#PANNEL SETTING
+        self.send_data(0x1F)   #KW-3f   KWR-2F	BWROTP 0f	BWOTP 1f
+        
+        self.send_command(0X50)
+        self.send_data(0x10)
+        self.send_data(0x07)
+
+        self.send_command(0x04) #POWER ON
+        self.delay_ms(100) 
+        self.WaitUntilIdle()        #waiting for the electronic paper IC to release the idle signal
+
+        #Enhanced display drive(Add 0x06 command)
+        self.send_command(0x06)			#Booster Soft Start 
+        self.send_data (0x27)
+        self.send_data (0x27)   
+        self.send_data (0x18)		
+        self.send_data (0x17)	
+
+        self.send_command(0xE0)
+        self.send_data(0x02)
+        self.send_command(0xE5)
+        self.send_data(0x5F)
 
         # EPD hardware init end
         return 0
@@ -236,8 +289,7 @@ class EPD_7in5(framebuf.FrameBuffer):
                 
         self.TurnOnDisplay()
         
-    def display(self,blackimage):
-        
+    def display(self,Image):
         high = self.height
         if( self.width % 8 == 0) :
             wide =  self.width // 8
@@ -246,12 +298,12 @@ class EPD_7in5(framebuf.FrameBuffer):
                        
         self.send_command(0x10) 
         for i in range(0, wide):
-            self.send_data1(blackimage[(i * high) : ((i+1) * high)])
+            self.send_data1(Image[(i * high) : ((i+1) * high)])
         
         self.send_command(0x13) 
         for j in range(high):
             for i in range(wide):
-                self.send_data(~blackimage[i + j * wide])
+                self.send_data(~Image[i + j * wide])
                 
         self.TurnOnDisplay()
         
@@ -298,8 +350,83 @@ class EPD_7in5(framebuf.FrameBuffer):
         self.delay_ms(100)
         self.WaitUntilIdle()
 
+    def display_4Gray(self, image):
+        self.send_command(0x10)
+        for i in range(0, 48000):     
+            temp3=0
+            for j in range(0, 2):
+                temp1 = image[i*2+j]
+                for k in range(0, 2):
+                    temp2 = temp1&0x03 
+                    if(temp2 == 0x03):
+                        temp3 |= 0x01   # white
+                    elif(temp2 == 0x00):
+                        temp3 |= 0x00   # black
+                    elif(temp2 == 0x02):
+                        temp3 |= 0x01   # gray1
+                    else:   # 0x01
+                        temp3 |= 0x00   # gray2
+                    temp3 <<= 1
+
+                    temp1 >>= 2
+                    temp2 = temp1&0x03 
+                    if(temp2 == 0x03):   # white
+                        temp3 |= 0x01
+                    elif(temp2 == 0x00):   # black
+                        temp3 |= 0x00
+                    elif(temp2 == 0x02):
+                        temp3 |= 0x01   # gray1
+                    else:   # 0x01
+                        temp3 |= 0x00   # gray2
+                    
+                    if (( j!=1 ) | ( k!=1 )):
+                        temp3 <<= 1
+
+                    temp1 >>= 2
+            self.send_data(temp3)
+            
+        self.send_command(0x13)	       
+        for i in range(0, 48000):       
+            temp3=0
+            for j in range(0, 2):
+                temp1 = image[i*2+j]
+                for k in range(0, 2):
+                    temp2 = temp1&0x03 
+                    if(temp2 == 0x03):
+                        temp3 |= 0x01   # white
+                    elif(temp2 == 0x00):
+                        temp3 |= 0x00   # black
+                    elif(temp2 == 0x02):
+                        temp3 |= 0x00   # gray1
+                    else:   # 0x01
+                        temp3 |= 0x01   # gray2
+                    temp3 <<= 1
+
+                    temp1 >>= 2
+                    temp2 = temp1&0x03
+                    if(temp2 == 0x03):   # white
+                        temp3 |= 0x01
+                    elif(temp2 == 0x00):   # black
+                        temp3 |= 0x00
+                    elif(temp2 == 0x02):
+                        temp3 |= 0x00   # gray1
+                    else:   # 0x01
+                        temp3 |= 0x01   # gray2
+                    
+                    if (( j!=1 ) | ( k!=1 )):
+                        temp3 <<= 1
+
+                    temp1 >>= 2
+            self.send_data(temp3)
+        
+        self.send_command(0x12)
+        self.delay_ms(100)
+        self.WaitUntilIdle()
+
 
     def sleep(self):
+        self.send_command(0x50)
+        self.send_data(0XF7)
         self.send_command(0x02) # power off
         self.WaitUntilIdle()
         self.send_command(0x07) # deep sleep
@@ -309,52 +436,63 @@ if __name__=='__main__':
     epd = EPD_7in5()
     epd.Clear()
     
-    epd.fill(0xFF)
+    epd.image1Gray.fill(0xFF)
     
-    epd.text("Waveshare", 5, 10, 0x00)
-    epd.text("Pico_ePaper-7.5", 5, 40, 0x00)
-    epd.text("Raspberry Pico", 5, 70, 0x00)
-    epd.display(epd.buffer)
+    epd.image1Gray.text("Waveshare", 5, 10, 0x00)
+    epd.image1Gray.text("Pico_ePaper-7.5", 5, 40, 0x00)
+    epd.image1Gray.text("Raspberry Pico", 5, 70, 0x00)
+    epd.display(epd.buffer_1Gray)
     epd.delay_ms(5000)
     
-    epd.vline(10, 90, 60, 0x00)
-    epd.vline(120, 90, 60, 0x00)
-    epd.hline(10, 90, 110, 0x00)
-    epd.hline(10, 150, 110, 0x00)
-    epd.line(10, 90, 120, 150, 0x00)
-    epd.line(120, 90, 10, 150, 0x00)
-    epd.display(epd.buffer)
+    epd.image1Gray.vline(10, 90, 60, 0x00)
+    epd.image1Gray.vline(120, 90, 60, 0x00)
+    epd.image1Gray.hline(10, 90, 110, 0x00)
+    epd.image1Gray.hline(10, 150, 110, 0x00)
+    epd.image1Gray.line(10, 90, 120, 150, 0x00)
+    epd.image1Gray.line(120, 90, 10, 150, 0x00)
+    epd.display(epd.buffer_1Gray)
     epd.delay_ms(5000)
     
-    epd.rect(10, 180, 50, 80, 0x00)
-    epd.fill_rect(70, 180, 50, 80, 0x00)
-    epd.display(epd.buffer)
+    epd.image1Gray.rect(10, 180, 50, 80, 0x00)
+    epd.image1Gray.fill_rect(70, 180, 50, 80, 0x00)
+    epd.display(epd.buffer_1Gray)
     epd.delay_ms(5000)
     
-    epd.fill_rect(250, 150, 480, 20, 0x00)
-    epd.fill_rect(250, 310, 480, 20, 0x00)
-    epd.fill_rect(400, 0, 20, 480, 0x00)
-    epd.fill_rect(560, 0, 20, 480, 0x00)
+    epd.image1Gray.fill_rect(250, 150, 480, 20, 0x00)
+    epd.image1Gray.fill_rect(250, 310, 480, 20, 0x00)
+    epd.image1Gray.fill_rect(400, 0, 20, 480, 0x00)
+    epd.image1Gray.fill_rect(560, 0, 20, 480, 0x00)
 
     for j in range(0, 3):
         for i in range(0, 15):
-            epd.line(270+j*160+i, 20+j*160, 375+j*160+i, 140+j*160, 0x00)
+            epd.image1Gray.line(270+j*160+i, 20+j*160, 375+j*160+i, 140+j*160, 0x00)
         for i in range(0, 15):
-            epd.line(375+j*160+i, 20+j*160, 270+j*160+i, 140+j*160, 0x00)
+            epd.image1Gray.line(375+j*160+i, 20+j*160, 270+j*160+i, 140+j*160, 0x00)
         for i in range(0, 15):
-            epd.line(270+j*160, 20+j*160+i, 390+j*160, 125+j*160+i, 0x00)
+            epd.image1Gray.line(270+j*160, 20+j*160+i, 390+j*160, 125+j*160+i, 0x00)
         for i in range(0, 15):
-            epd.line(270+j*160, 125+j*160+i, 390+j*160, 20+j*160+i, 0x00)        
-    epd.fill_rect(270, 190, 100, 100, 0x00)
-    epd.fill_rect(270, 350, 100, 100, 0x00)
-    epd.display(epd.buffer)
+            epd.image1Gray.line(270+j*160, 125+j*160+i, 390+j*160, 20+j*160+i, 0x00)        
+    epd.image1Gray.fill_rect(270, 190, 100, 100, 0x00)
+    epd.image1Gray.fill_rect(270, 350, 100, 100, 0x00)
+    epd.display(epd.buffer_1Gray)
     epd.delay_ms(5000)
     
     # epd.init_part()
     # for i in range(0, 10):
-        # epd.fill_rect(40, 260, 40, 10, 0x00)
-        # epd.text(str(i), 60, 260, 0xFF)
-        # epd.display_Partial(epd.buffer, 0, 0, 800, 480)
+    #     epd.image1Gray.fill_rect(40, 260, 40, 10, 0x00)
+    #     epd.image1Gray.text(str(i), 60, 260, 0xFF)
+    #     epd.display_Partial(epd.buffer_1Gray, 0, 0, 800, 480)
+
+    # # The feature will only be available on screens sold after 24/10/23
+    # print("Four grayscale refresh")
+    # epd.init_4Gray()
+    # epd.image4Gray.fill_rect(150, 10, 250, 30, epd.black)
+    # epd.image4Gray.text('GRAY1 with black background',155, 21, epd.white)
+    # epd.image4Gray.text('GRAY2 with white background',155, 51, epd.grayish)
+    # epd.image4Gray.text('GRAY3 with white background',155, 81, epd.darkgray)
+    # epd.image4Gray.text('GRAY4 with white background',155, 111, epd.black)
+    # epd.display_4Gray(epd.buffer_4Gray)
+    # epd.delay_ms(5000)
      
     epd.init() 
     epd.Clear()

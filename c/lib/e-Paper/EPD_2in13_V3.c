@@ -356,7 +356,7 @@ void EPD_2in13_V3_Display_Partial(UBYTE *Image)
 	
 	//Reset
     DEV_Digital_Write(EPD_RST_PIN, 0);
-    DEV_Delay_ms(1);
+    DEV_Delay_ms(2);
     DEV_Digital_Write(EPD_RST_PIN, 1);
 
 	EPD_2IN13_V3_LUT_by_host(WF_PARTIAL_2IN13_V3);

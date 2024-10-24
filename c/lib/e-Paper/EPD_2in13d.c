@@ -332,7 +332,7 @@ void EPD_2IN13D_Init()
     EPD_2IN13D_ReadBusy();
 
     EPD_2IN13D_SendCommand(0x00);	//panel setting
-    EPD_2IN13D_SendData(0xbf);     //LUT from OTPï¼Œ128x296
+    EPD_2IN13D_SendData(0xbf);     //LUT from OTPï¼?128x296
     EPD_2IN13D_SendData(0x0e);     //VCOM to 0V fast
 
     EPD_2IN13D_SendCommand(0x30);	//PLL setting

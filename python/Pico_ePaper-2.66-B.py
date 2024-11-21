@@ -59,7 +59,7 @@ WF_PARTIAL_2IN66 =[
 0x00,0x00,0x00,0x22,0x17,0x41,0xB0,0x32,0x36,
 ]
 
-class EPD_2in9_B:
+class EPD_2in66_B:
     def __init__(self):
         self.reset_pin = Pin(RST_PIN, Pin.OUT)
         
@@ -214,7 +214,7 @@ class EPD_2in9_B:
         self.send_data(0x01)
         
 if __name__=='__main__':
-    epd = EPD_2in9_B()
+    epd = EPD_2in66_B()
     epd.Clear(0xff, 0xff)
     
     epd.imageblack.fill(0xff)
